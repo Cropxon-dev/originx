@@ -11,10 +11,10 @@ interface OriginXLogoProps {
 }
 
 const sizeConfig = {
-  sm: { width: 24, height: 24, layerSize: 10, gap: 2, strokeWidth: 1.5 },
-  md: { width: 32, height: 32, layerSize: 14, gap: 3, strokeWidth: 2 },
-  lg: { width: 48, height: 48, layerSize: 20, gap: 4, strokeWidth: 2.5 },
-  xl: { width: 64, height: 64, layerSize: 28, gap: 5, strokeWidth: 3 },
+  sm: { width: 20, height: 18 },
+  md: { width: 28, height: 24 },
+  lg: { width: 40, height: 34 },
+  xl: { width: 56, height: 48 },
 };
 
 export function OriginXLogo({ 
@@ -26,119 +26,71 @@ export function OriginXLogo({
   showSubtext = false,
 }: OriginXLogoProps) {
   const config = sizeConfig[size];
-  const { width, height, layerSize, gap, strokeWidth } = config;
+  const { width, height } = config;
   
-  // Calculate layer positions (center of canvas, stacked vertically)
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const totalStackHeight = (layerSize * 0.5) * 3 + gap * 2;
-  const startY = centerY - totalStackHeight / 2 + layerSize * 0.25;
-
+  // Layer animation delays (bottom to top)
   const layers = [
-    { y: startY + (layerSize * 0.5 + gap) * 2, delay: 0 },      // Bottom
-    { y: startY + (layerSize * 0.5 + gap), delay: 0.1 },        // Middle
-    { y: startY, delay: 0.2 },                                    // Top
+    { delay: 0 },      // Bottom
+    { delay: 0.12 },   // Middle  
+    { delay: 0.24 },   // Top
   ];
 
-  // Create diamond path (rotated square with rounded corners)
-  const createDiamondPath = (cx: number, cy: number, size: number) => {
-    const half = size / 2;
-    const corner = size * 0.15; // Rounded corner amount
-    
-    return `
-      M ${cx} ${cy - half + corner}
-      Q ${cx} ${cy - half} ${cx + corner} ${cy - half + corner * 0.3}
-      L ${cx + half - corner} ${cy - corner * 0.3}
-      Q ${cx + half} ${cy} ${cx + half - corner} ${cy + corner * 0.3}
-      L ${cx + corner} ${cy + half - corner * 0.3}
-      Q ${cx} ${cy + half} ${cx - corner} ${cy + half - corner * 0.3}
-      L ${cx - half + corner} ${cy + corner * 0.3}
-      Q ${cx - half} ${cy} ${cx - half + corner} ${cy - corner * 0.3}
-      L ${cx - corner} ${cy - half + corner * 0.3}
-      Q ${cx} ${cy - half} ${cx} ${cy - half + corner}
-      Z
-    `;
+  const loadingAnimation = {
+    opacity: [0.3, 1, 0.3],
+    transition: {
+      duration: 1.2,
+      repeat: Infinity,
+      ease: "easeInOut" as const,
+    },
   };
 
-  const loadingVariants = {
-    initial: { opacity: 0.3 },
-    animate: (i: number) => ({
-      opacity: [0.3, 1, 0.3],
-      transition: {
-        duration: 1.2,
-        repeat: Infinity,
-        delay: i * 0.15,
-        ease: "easeInOut" as const,
-      },
-    }),
-  };
-
-  const enterVariants = {
-    initial: { opacity: 0, y: 8 },
-    animate: (delay: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        delay,
-        ease: [0.25, 0.46, 0.45, 0.94] as const,
-      },
-    }),
-  };
+  const enterAnimation = (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      delay,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
+  });
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <svg
         width={width}
         height={height}
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox="0 0 56 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="flex-shrink-0"
       >
-        {layers.map((layer, index) => {
-          if (loading) {
-            return (
-              <motion.path
-                key={index}
-                d={createDiamondPath(centerX, layer.y, layerSize)}
-                stroke="currentColor"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                className="text-foreground"
-                initial={{ opacity: 0.3 }}
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  delay: index * 0.15,
-                  ease: "easeInOut",
-                }}
-              />
-            );
-          }
-          return (
-            <motion.path
-              key={index}
-              d={createDiamondPath(centerX, layer.y, layerSize)}
-              stroke="currentColor"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              className="text-foreground"
-              initial={animate ? { opacity: 0, y: 8 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: layer.delay,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-            />
-          );
-        })}
+        {/* Bottom Layer - Isometric parallelogram */}
+        <motion.path
+          d="M6 36 L28 44 L50 36 L28 28 Z"
+          fill="currentColor"
+          className="text-foreground"
+          initial={animate ? { opacity: 0, y: 6 } : false}
+          animate={loading ? loadingAnimation : enterAnimation(layers[0].delay)}
+          style={loading ? { animationDelay: "0ms" } : undefined}
+        />
+        
+        {/* Middle Layer - Isometric parallelogram */}
+        <motion.path
+          d="M6 26 L28 34 L50 26 L28 18 Z"
+          fill="currentColor"
+          className="text-foreground"
+          initial={animate ? { opacity: 0, y: 6 } : false}
+          animate={loading ? { ...loadingAnimation, transition: { ...loadingAnimation.transition, delay: 0.15 } } : enterAnimation(layers[1].delay)}
+        />
+        
+        {/* Top Layer - Isometric parallelogram with rounded top corners */}
+        <motion.path
+          d="M10 14 Q28 6 46 14 L50 16 L28 24 L6 16 L10 14 Z"
+          fill="currentColor"
+          className="text-foreground"
+          initial={animate ? { opacity: 0, y: 6 } : false}
+          animate={loading ? { ...loadingAnimation, transition: { ...loadingAnimation.transition, delay: 0.3 } } : enterAnimation(layers[2].delay)}
+        />
       </svg>
       
       {showText && (
@@ -171,121 +123,39 @@ export function OriginXLogoFilled({
   className?: string;
 }) {
   const config = sizeConfig[size];
-  const { width, height, layerSize, gap } = config;
-  
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const totalStackHeight = (layerSize * 0.5) * 3 + gap * 2;
-  const startY = centerY - totalStackHeight / 2 + layerSize * 0.25;
-
-  const layers = [
-    { y: startY + (layerSize * 0.5 + gap) * 2, opacity: 0.4 },
-    { y: startY + (layerSize * 0.5 + gap), opacity: 0.7 },
-    { y: startY, opacity: 1 },
-  ];
-
-  const createDiamondPath = (cx: number, cy: number, size: number) => {
-    const half = size / 2;
-    return `
-      M ${cx} ${cy - half}
-      L ${cx + half} ${cy}
-      L ${cx} ${cy + half}
-      L ${cx - half} ${cy}
-      Z
-    `;
-  };
+  const { width, height } = config;
 
   return (
     <svg
       width={width}
       height={height}
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox="0 0 56 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("flex-shrink-0", className)}
     >
-      {layers.map((layer, index) => (
-        <path
-          key={index}
-          d={createDiamondPath(centerX, layer.y, layerSize * 0.9)}
-          fill="currentColor"
-          opacity={layer.opacity}
-          className="text-accent"
-        />
-      ))}
+      {/* Bottom Layer */}
+      <path
+        d="M6 36 L28 44 L50 36 L28 28 Z"
+        fill="currentColor"
+        opacity={0.4}
+        className="text-foreground"
+      />
+      {/* Middle Layer */}
+      <path
+        d="M6 26 L28 34 L50 26 L28 18 Z"
+        fill="currentColor"
+        opacity={0.7}
+        className="text-foreground"
+      />
+      {/* Top Layer */}
+      <path
+        d="M10 14 Q28 6 46 14 L50 16 L28 24 L6 16 L10 14 Z"
+        fill="currentColor"
+        opacity={1}
+        className="text-foreground"
+      />
     </svg>
-  );
-}
-
-// Gradient background variant for cards/hero sections
-export function OriginXLogoGradient({ 
-  size = "lg",
-  className,
-}: { 
-  size?: "sm" | "md" | "lg" | "xl";
-  className?: string;
-}) {
-  const config = sizeConfig[size];
-  const { width, height, layerSize, gap, strokeWidth } = config;
-  
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const totalStackHeight = (layerSize * 0.5) * 3 + gap * 2;
-  const startY = centerY - totalStackHeight / 2 + layerSize * 0.25;
-
-  const layers = [
-    { y: startY + (layerSize * 0.5 + gap) * 2, delay: 0 },
-    { y: startY + (layerSize * 0.5 + gap), delay: 0.1 },
-    { y: startY, delay: 0.2 },
-  ];
-
-  const createDiamondPath = (cx: number, cy: number, size: number) => {
-    const half = size / 2;
-    const corner = size * 0.12;
-    
-    return `
-      M ${cx} ${cy - half + corner}
-      Q ${cx} ${cy - half} ${cx + corner} ${cy - half + corner * 0.3}
-      L ${cx + half - corner} ${cy - corner * 0.3}
-      Q ${cx + half} ${cy} ${cx + half - corner} ${cy + corner * 0.3}
-      L ${cx + corner} ${cy + half - corner * 0.3}
-      Q ${cx} ${cy + half} ${cx - corner} ${cy + half - corner * 0.3}
-      L ${cx - half + corner} ${cy + corner * 0.3}
-      Q ${cx - half} ${cy} ${cx - half + corner} ${cy - corner * 0.3}
-      L ${cx - corner} ${cy - half + corner * 0.3}
-      Q ${cx} ${cy - half} ${cx} ${cy - half + corner}
-      Z
-    `;
-  };
-
-  return (
-    <div className={cn(
-      "w-fit h-fit rounded-xl bg-gradient-to-br from-accent to-glow-secondary p-2 flex items-center justify-center",
-      className
-    )}>
-      <svg
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {layers.map((layer, index) => (
-          <motion.path
-            key={index}
-            d={createDiamondPath(centerX, layer.y, layerSize)}
-            stroke="hsl(var(--accent-foreground))"
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: layer.delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-          />
-        ))}
-      </svg>
-    </div>
   );
 }
 
