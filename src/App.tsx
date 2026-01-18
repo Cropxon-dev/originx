@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import { PerformanceProvider } from "@/hooks/usePerformance";
 import { SplashScreen } from "@/components/SplashScreen";
 import { useSplashScreen } from "@/hooks/useSplashScreen";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -86,15 +87,17 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <PerformanceProvider>
-        <TooltipProvider>
-          <AppContent />
-        </TooltipProvider>
-      </PerformanceProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <PerformanceProvider>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </PerformanceProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
