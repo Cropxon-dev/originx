@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Playground from "./pages/Playground";
 import Marketplace from "./pages/Marketplace";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -41,6 +42,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/about" element={<About />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="/marketplace" element={<Marketplace />} />
             

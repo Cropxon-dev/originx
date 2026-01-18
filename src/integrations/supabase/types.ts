@@ -50,6 +50,48 @@ export type Database = {
         }
         Relationships: []
       }
+      api_usage: {
+        Row: {
+          api_name: string
+          cost: number
+          created_at: string
+          endpoint: string
+          environment: string
+          id: string
+          latency_ms: number
+          method: string
+          status_code: number
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          api_name: string
+          cost?: number
+          created_at?: string
+          endpoint: string
+          environment?: string
+          id?: string
+          latency_ms?: number
+          method?: string
+          status_code?: number
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          api_name?: string
+          cost?: number
+          created_at?: string
+          endpoint?: string
+          environment?: string
+          id?: string
+          latency_ms?: number
+          method?: string
+          status_code?: number
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -80,15 +122,173 @@ export type Database = {
         }
         Relationships: []
       }
+      publisher_apis: {
+        Row: {
+          auth_type: string
+          base_url: string | null
+          billing_unit: string
+          category: string
+          created_at: string
+          description: string | null
+          free_tier_limit: number | null
+          id: string
+          live_key_verified: boolean | null
+          module: string | null
+          name: string
+          openapi_spec: Json | null
+          price_per_unit: number
+          publisher_id: string
+          rate_limit: number | null
+          regions: string[] | null
+          status: string
+          test_key_verified: boolean | null
+          updated_at: string
+          version: string | null
+        }
+        Insert: {
+          auth_type?: string
+          base_url?: string | null
+          billing_unit?: string
+          category: string
+          created_at?: string
+          description?: string | null
+          free_tier_limit?: number | null
+          id?: string
+          live_key_verified?: boolean | null
+          module?: string | null
+          name: string
+          openapi_spec?: Json | null
+          price_per_unit?: number
+          publisher_id: string
+          rate_limit?: number | null
+          regions?: string[] | null
+          status?: string
+          test_key_verified?: boolean | null
+          updated_at?: string
+          version?: string | null
+        }
+        Update: {
+          auth_type?: string
+          base_url?: string | null
+          billing_unit?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          free_tier_limit?: number | null
+          id?: string
+          live_key_verified?: boolean | null
+          module?: string | null
+          name?: string
+          openapi_spec?: Json | null
+          price_per_unit?: number
+          publisher_id?: string
+          rate_limit?: number | null
+          regions?: string[] | null
+          status?: string
+          test_key_verified?: boolean | null
+          updated_at?: string
+          version?: string | null
+        }
+        Relationships: []
+      }
+      publisher_payouts: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payout_method: string | null
+          processed_at: string | null
+          publisher_id: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payout_method?: string | null
+          processed_at?: string | null
+          publisher_id: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payout_method?: string | null
+          processed_at?: string | null
+          publisher_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      subscribed_apis: {
+        Row: {
+          api_id: string
+          id: string
+          status: string
+          subscribed_at: string
+          user_id: string
+        }
+        Insert: {
+          api_id: string
+          id?: string
+          status?: string
+          subscribed_at?: string
+          user_id: string
+        }
+        Update: {
+          api_id?: string
+          id?: string
+          status?: string
+          subscribed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscribed_apis_api_id_fkey"
+            columns: ["api_id"]
+            isOneToOne: false
+            referencedRelation: "publisher_apis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "publisher" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -215,6 +415,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "publisher", "user"],
+    },
   },
 } as const
