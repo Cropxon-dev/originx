@@ -1,85 +1,25 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Store,
-  Layers,
-  Key,
-  BarChart3,
-  CreditCard,
-  Bell,
-  FileText,
-  Book,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
+  LayoutDashboard, Store, Layers, Key, BarChart3, CreditCard,
+  Bell, FileText, Book, Settings, ChevronLeft, ChevronRight, Route
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
-  {
-    title: "Overview",
-    icon: LayoutDashboard,
-    href: "/dashboard",
-    badge: null,
-  },
-  {
-    title: "API Marketplace",
-    icon: Store,
-    href: "/dashboard/marketplace",
-    badge: "700+",
-  },
-  {
-    title: "My APIs",
-    icon: Layers,
-    href: "/dashboard/my-apis",
-    badge: null,
-  },
-  {
-    title: "API Keys",
-    icon: Key,
-    href: "/dashboard/keys",
-    badge: null,
-  },
-  {
-    title: "Usage & Analytics",
-    icon: BarChart3,
-    href: "/dashboard/usage",
-    badge: null,
-  },
-  {
-    title: "Billing & Costs",
-    icon: CreditCard,
-    href: "/dashboard/billing",
-    badge: null,
-  },
-  {
-    title: "Alerts & Limits",
-    icon: Bell,
-    href: "/dashboard/alerts",
-    badge: null,
-  },
-  {
-    title: "Logs & Monitoring",
-    icon: FileText,
-    href: "/dashboard/logs",
-    badge: null,
-  },
-  {
-    title: "Documentation",
-    icon: Book,
-    href: "/dashboard/docs",
-    badge: null,
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    href: "/dashboard/settings",
-    badge: null,
-  },
+  { title: "Overview", icon: LayoutDashboard, href: "/dashboard", badge: null },
+  { title: "API Marketplace", icon: Store, href: "/dashboard/marketplace", badge: "700+" },
+  { title: "My APIs", icon: Layers, href: "/dashboard/my-apis", badge: null },
+  { title: "API Keys", icon: Key, href: "/dashboard/keys", badge: null },
+  { title: "Usage & Analytics", icon: BarChart3, href: "/dashboard/usage", badge: null },
+  { title: "Routing & Optimization", icon: Route, href: "/dashboard/routing", badge: null },
+  { title: "Billing & Costs", icon: CreditCard, href: "/dashboard/billing", badge: null },
+  { title: "Alerts & Limits", icon: Bell, href: "/dashboard/alerts", badge: null },
+  { title: "Logs & Monitoring", icon: FileText, href: "/dashboard/logs", badge: null },
+  { title: "Documentation", icon: Book, href: "/dashboard/docs", badge: null },
+  { title: "Settings", icon: Settings, href: "/dashboard/settings", badge: null },
 ];
 
 interface DashboardSidebarProps {
