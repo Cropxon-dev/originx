@@ -1,8 +1,8 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Bottom Layer -->
-  <path d="M4 22 L16 27 L28 22 L16 17 Z" fill="white"/>
+  <path d="M4 22 L16 27 L28 22 L16 17 Z" fill="#0A0A0B"/>
   <!-- Middle Layer -->
-  <path d="M4 16 L16 21 L28 16 L16 11 Z" fill="white"/>
+  <path d="M4 16 L16 21 L28 16 L16 11 Z" fill="#0A0A0B"/>
   <!-- Top Layer with rounded corners -->
-  <path d="M6 9 Q16 5 26 9 L28 10 L16 15 L4 10 L6 9 Z" fill="white"/>
+  <path d="M6 9 Q16 5 26 9 L28 10 L16 15 L4 10 L6 9 Z" fill="#0A0A0B"/>
 </svg>
