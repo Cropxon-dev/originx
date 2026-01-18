@@ -7,10 +7,10 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace", isRoute: true },
-  { label: "APIs", href: "#apis" },
+  { label: "About", href: "/about", isRoute: true },
   { label: "Docs", href: "#docs" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Security", href: "#security" },
+  { label: "Publishers", href: "/publisher", isRoute: true },
 ];
 
 export const Header = () => {
@@ -31,7 +31,10 @@ export const Header = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
               <span className="text-accent-foreground font-bold text-sm">O</span>
             </div>
-            <span className="font-semibold text-lg tracking-tight">OriginX</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-lg tracking-tight leading-tight">OriginX</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

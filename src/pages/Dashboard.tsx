@@ -8,11 +8,16 @@ import { UsageChart } from "@/components/dashboard/UsageChart";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { ActiveApiKeys } from "@/components/dashboard/ActiveApiKeys";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeUsage } from "@/hooks/useRealtimeUsage";
 import type { Tables } from "@/integrations/supabase/types";
 
 type ApiKey = Tables<"api_keys">;
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [environment, setEnvironment] = useState<'sandbox' | 'production'>('sandbox');
+  const { metrics, isLoading: metricsLoading } = useRealtimeUsage(environment);
   const navigate = useNavigate();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
 

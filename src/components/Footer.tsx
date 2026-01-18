@@ -1,10 +1,31 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const footerLinks = {
-  Product: ["APIs", "Docs", "Pricing", "Changelog"],
-  Resources: ["Blog", "Guides", "Examples", "Status"],
-  Company: ["About", "Careers", "Press", "Contact"],
-  Legal: ["Privacy", "Terms", "Security", "Compliance"],
+  Product: [
+    { label: "APIs", href: "/marketplace" },
+    { label: "Docs", href: "/dashboard/docs" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Playground", href: "/playground" },
+  ],
+  Resources: [
+    { label: "Blog", href: "#" },
+    { label: "Guides", href: "#" },
+    { label: "Examples", href: "#" },
+    { label: "Status", href: "#" },
+  ],
+  Company: [
+    { label: "About", href: "/about" },
+    { label: "Careers", href: "#" },
+    { label: "Publishers", href: "/publisher" },
+    { label: "Contact", href: "#" },
+  ],
+  Legal: [
+    { label: "Privacy", href: "#" },
+    { label: "Terms", href: "#" },
+    { label: "Security", href: "#" },
+    { label: "Compliance", href: "#" },
+  ],
 };
 
 export const Footer = () => {
@@ -20,14 +41,28 @@ export const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             {/* Logo & Description */}
             <div className="col-span-2 md:col-span-1">
-              <a href="/" className="flex items-center gap-2 mb-4">
+              <Link to="/" className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
                   <span className="text-accent-foreground font-bold text-sm">O</span>
                 </div>
-                <span className="font-semibold text-lg tracking-tight">OriginX</span>
-              </a>
-              <p className="text-sm text-muted-foreground">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-lg tracking-tight leading-tight">OriginX</span>
+                  <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
+                </div>
+              </Link>
+              <p className="text-sm text-muted-foreground mb-4">
                 The universal API hub for modern developers.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                A Product Division of{" "}
+                <a 
+                  href="https://www.cropxon.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  Cropxon Innovations Pvt. Ltd
+                </a>
               </p>
             </div>
 
@@ -37,13 +72,22 @@ export const Footer = () => {
                 <h4 className="font-medium text-sm mb-4">{category}</h4>
                 <ul className="space-y-3">
                   {links.map((link) => (
-                    <li key={link}>
-                      <a
-                        href="#"
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
-                      >
-                        {link}
-                      </a>
+                    <li key={link.label}>
+                      {link.href.startsWith('/') ? (
+                        <Link
+                          to={link.href}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                        >
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -53,10 +97,23 @@ export const Footer = () => {
 
           {/* Bottom */}
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-border/30">
-            <p className="text-sm text-muted-foreground">
-              © 2025 OriginX. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
+            <div className="text-center md:text-left mb-4 md:mb-0">
+              <p className="text-sm text-muted-foreground">
+                © 2025 OriginX. All rights reserved.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                OriginX - A Product Division of{" "}
+                <a 
+                  href="https://www.cropxon.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  Cropxon Innovations Pvt. Ltd
+                </a>
+              </p>
+            </div>
+            <div className="flex items-center gap-6">
               <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Twitter
               </a>

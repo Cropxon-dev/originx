@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Layers, Plus, DollarSign, Key, BarChart3,
-  Wallet, Star, Settings, ChevronLeft, Zap, TrendingUp, Users
+  Wallet, Star, Settings, ChevronLeft, Zap, TrendingUp, Users, AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useUserRoles } from "@/hooks/useRealtimeUsage";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+// Import publisher pages
+import CreateApiPage from "./CreateApiPage";
+import PublisherApisPage from "./PublisherApisPage";
+import PublisherRevenuePage from "./PublisherRevenuePage";
+import PublisherPayoutsPage from "./PublisherPayoutsPage";
 
 const publisherNavItems = [
   { title: "Overview", icon: LayoutDashboard, href: "/publisher" },
@@ -34,7 +43,10 @@ function PublisherSidebar() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
             <span className="text-accent-foreground font-bold text-sm">O</span>
           </div>
-          <span className="font-semibold">OriginX Publisher</span>
+          <div className="flex flex-col">
+            <span className="font-semibold leading-tight">OriginX Publisher</span>
+            <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
+          </div>
         </Link>
         <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="w-full justify-start">
           <ChevronLeft className="w-4 h-4 mr-2" />
@@ -67,6 +79,11 @@ function PublisherSidebar() {
       </ScrollArea>
 
       <div className="p-4 border-t border-border">
+        <div className="text-xs text-muted-foreground mb-2">
+          <a href="https://www.cropxon.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            Cropxon Innovations Pvt. Ltd
+          </a>
+        </div>
         <ThemeToggle />
       </div>
     </aside>
@@ -117,27 +134,33 @@ function PublisherOverview() {
       >
         <h2 className="font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Button variant="outline" className="justify-start h-auto py-4">
-            <Plus className="w-5 h-5 mr-3" />
-            <div className="text-left">
-              <p className="font-medium">Create New API</p>
-              <p className="text-xs text-muted-foreground">Publish a new API</p>
-            </div>
-          </Button>
-          <Button variant="outline" className="justify-start h-auto py-4">
-            <BarChart3 className="w-5 h-5 mr-3" />
-            <div className="text-left">
-              <p className="font-medium">View Analytics</p>
-              <p className="text-xs text-muted-foreground">Check performance</p>
-            </div>
-          </Button>
-          <Button variant="outline" className="justify-start h-auto py-4">
-            <Wallet className="w-5 h-5 mr-3" />
-            <div className="text-left">
-              <p className="font-medium">Request Payout</p>
-              <p className="text-xs text-muted-foreground">Withdraw earnings</p>
-            </div>
-          </Button>
+          <Link to="/publisher/create">
+            <Button variant="outline" className="justify-start h-auto py-4 w-full">
+              <Plus className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <p className="font-medium">Create New API</p>
+                <p className="text-xs text-muted-foreground">Publish a new API</p>
+              </div>
+            </Button>
+          </Link>
+          <Link to="/publisher/revenue">
+            <Button variant="outline" className="justify-start h-auto py-4 w-full">
+              <BarChart3 className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <p className="font-medium">View Analytics</p>
+                <p className="text-xs text-muted-foreground">Check performance</p>
+              </div>
+            </Button>
+          </Link>
+          <Link to="/publisher/payouts">
+            <Button variant="outline" className="justify-start h-auto py-4 w-full">
+              <Wallet className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <p className="font-medium">Request Payout</p>
+                <p className="text-xs text-muted-foreground">Withdraw earnings</p>
+              </div>
+            </Button>
+          </Link>
         </div>
       </motion.div>
     </div>
@@ -155,19 +178,134 @@ function PlaceholderPage({ title }: { title: string }) {
   );
 }
 
+function BecomePublisherPrompt() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleBecomePublisher = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+
+      // Add publisher role
+      const { error } = await supabase.from('user_roles').insert({
+        user_id: user.id,
+        role: 'publisher',
+      });
+
+      if (error && !error.message.includes('duplicate')) throw error;
+      
+      toast.success("You're now a publisher! Start creating APIs.");
+      window.location.reload();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to become publisher");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md w-full bg-card border border-border rounded-xl p-8 text-center"
+      >
+        <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Layers className="w-8 h-8 text-accent" />
+        </div>
+        <h1 className="text-2xl font-bold mb-2">Become a Publisher</h1>
+        <p className="text-muted-foreground mb-6">
+          Publish your APIs on OriginX and reach thousands of developers. 
+          Set your pricing, track usage, and earn revenue.
+        </p>
+        
+        <div className="space-y-4 text-left mb-6">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mt-0.5">
+              <Zap className="w-3 h-3 text-green-500" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Instant Distribution</p>
+              <p className="text-xs text-muted-foreground">Reach developers worldwide</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mt-0.5">
+              <TrendingUp className="w-3 h-3 text-green-500" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Transparent Pricing</p>
+              <p className="text-xs text-muted-foreground">15% commission, that's it</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mt-0.5">
+              <Wallet className="w-3 h-3 text-green-500" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Fast Payouts</p>
+              <p className="text-xs text-muted-foreground">Via Stripe, twice monthly</p>
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={handleBecomePublisher} disabled={isLoading} className="w-full">
+          {isLoading ? "Processing..." : "Become a Publisher"}
+        </Button>
+        
+        <p className="text-xs text-muted-foreground mt-4">
+          By joining, you agree to OriginX publisher terms.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function PublisherDashboard() {
+  const { isPublisher, isLoading } = useUserRoles();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        navigate('/auth');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+  }, [navigate]);
+
+  if (isAuthenticated === null || isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Show become publisher prompt if not a publisher
+  if (!isPublisher()) {
+    return <BecomePublisherPrompt />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <PublisherSidebar />
       <main className="ml-64">
         <Routes>
           <Route path="/" element={<PublisherOverview />} />
-          <Route path="/apis" element={<PlaceholderPage title="My APIs" />} />
-          <Route path="/create" element={<PlaceholderPage title="Create New API" />} />
+          <Route path="/apis" element={<PublisherApisPage />} />
+          <Route path="/create" element={<CreateApiPage />} />
           <Route path="/pricing" element={<PlaceholderPage title="Pricing & Plans" />} />
           <Route path="/keys" element={<PlaceholderPage title="Test & Live Keys" />} />
-          <Route path="/revenue" element={<PlaceholderPage title="Usage & Revenue" />} />
-          <Route path="/payouts" element={<PlaceholderPage title="Payouts" />} />
+          <Route path="/revenue" element={<PublisherRevenuePage />} />
+          <Route path="/payouts" element={<PublisherPayoutsPage />} />
           <Route path="/reviews" element={<PlaceholderPage title="Reviews & Issues" />} />
           <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
         </Routes>
