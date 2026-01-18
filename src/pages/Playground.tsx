@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, useMemo, memo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OriginXLogo } from "@/components/OriginXLogo";
 import {
   Play,
   ArrowLeft,
@@ -13,6 +14,7 @@ import {
   DollarSign,
   ChevronDown,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const endpoints = [
   { 
@@ -57,7 +59,7 @@ const endpoints = [
   },
 ];
 
-const sampleResponses: Record<string, any> = {
+const sampleResponses: Record<string, unknown> = {
   "/v1/ai/chat": {
     id: "ox_resp_1a2b3c4d",
     object: "chat.completion",
@@ -105,76 +107,118 @@ const sampleResponses: Record<string, any> = {
   }
 };
 
+// Memoized metric display
+const MetricDisplay = memo(({ 
+  icon: Icon, 
+  value, 
+  label, 
+  isAnimating,
+  accent = false 
+}: { 
+  icon: React.ElementType; 
+  value: string | number; 
+  label: string; 
+  isAnimating?: boolean;
+  accent?: boolean;
+}) => (
+  <div className="flex items-center gap-2">
+    <Icon className={`w-4 h-4 ${isAnimating ? "text-accent animate-pulse" : "text-muted-foreground"}`} />
+    <span className="text-sm">
+      <span className={`font-mono font-semibold ${accent ? "text-accent" : "text-foreground"}`}>
+        {value}
+      </span>
+      <span className="text-muted-foreground"> {label}</span>
+    </span>
+  </div>
+));
+
+MetricDisplay.displayName = "MetricDisplay";
+
+// Memoized endpoint button
+const EndpointButton = memo(({ 
+  endpoint, 
+  onSelect 
+}: { 
+  endpoint: typeof endpoints[0]; 
+  onSelect: () => void;
+}) => (
+  <button
+    onClick={onSelect}
+    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+  >
+    <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+      endpoint.method === "POST" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"
+    }`}>
+      {endpoint.method}
+    </span>
+    <div>
+      <p className="text-sm font-medium">{endpoint.name}</p>
+      <p className="text-xs text-muted-foreground font-mono">{endpoint.path}</p>
+    </div>
+  </button>
+));
+
+EndpointButton.displayName = "EndpointButton";
+
 const Playground = () => {
+  const prefersReducedMotion = useReducedMotion();
   const [selectedEndpoint, setSelectedEndpoint] = useState(endpoints[0]);
   const [requestBody, setRequestBody] = useState(
     JSON.stringify(endpoints[0].defaultBody, null, 2)
   );
   const [response, setResponse] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [metrics, setMetrics] = useState({
-    tokens: 0,
-    latency: 0,
-    cost: 0,
-  });
+  const [metrics, setMetrics] = useState({ tokens: 0, latency: 0, cost: 0 });
   const [copied, setCopied] = useState(false);
   const [endpointOpen, setEndpointOpen] = useState(false);
 
-  const handleRun = async () => {
+  const handleRun = useCallback(async () => {
     setIsLoading(true);
     setResponse("");
     setMetrics({ tokens: 0, latency: 0, cost: 0 });
 
-    // Simulate API call with typing effect
     const startTime = Date.now();
-    
-    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 500));
+    await new Promise((resolve) => setTimeout(resolve, 400 + Math.random() * 300));
 
     const sampleResponse = sampleResponses[selectedEndpoint.path];
     const responseStr = JSON.stringify(sampleResponse, null, 2);
     
-    // Animate response appearing
-    let currentResponse = "";
-    const lines = responseStr.split("\n");
-    
-    for (let i = 0; i < lines.length; i++) {
-      currentResponse += (i > 0 ? "\n" : "") + lines[i];
-      setResponse(currentResponse);
-      await new Promise((resolve) => setTimeout(resolve, 20));
-    }
+    // Simplified animation for performance
+    setResponse(responseStr);
 
     const latency = Date.now() - startTime;
-    const tokens = sampleResponse.usage?.total_tokens || Math.floor(Math.random() * 100 + 50);
-    
-    // Animate metrics
-    let currentTokens = 0;
-    const tokenStep = tokens / 20;
-    const tokenInterval = setInterval(() => {
-      currentTokens = Math.min(currentTokens + tokenStep, tokens);
-      setMetrics({
-        tokens: Math.floor(currentTokens),
-        latency,
-        cost: currentTokens * 0.00003,
-      });
-      if (currentTokens >= tokens) clearInterval(tokenInterval);
-    }, 30);
+    const tokens = (sampleResponse as Record<string, unknown>)?.usage 
+      ? ((sampleResponse as Record<string, {total_tokens?: number}>).usage?.total_tokens ?? 80)
+      : Math.floor(Math.random() * 100 + 50);
+
+    setMetrics({
+      tokens,
+      latency,
+      cost: tokens * 0.00003,
+    });
 
     setIsLoading(false);
-  };
+  }, [selectedEndpoint.path]);
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = useCallback(async (text: string) => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, []);
 
-  const handleEndpointChange = (endpoint: typeof endpoints[0]) => {
+  const handleEndpointChange = useCallback((endpoint: typeof endpoints[0]) => {
     setSelectedEndpoint(endpoint);
     setRequestBody(JSON.stringify(endpoint.defaultBody, null, 2));
     setResponse("");
     setMetrics({ tokens: 0, latency: 0, cost: 0 });
     setEndpointOpen(false);
-  };
+  }, []);
+
+  const routedVia = useMemo(() => {
+    if (selectedEndpoint.path.includes("ai")) return "OpenAI GPT-4o";
+    if (selectedEndpoint.path.includes("payment")) return "Stripe";
+    return "Twilio";
+  }, [selectedEndpoint.path]);
 
   return (
     <div className="min-h-screen relative">
@@ -185,20 +229,18 @@ const Playground = () => {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm">Back</span>
-              </a>
+              </Link>
               <div className="h-6 w-px bg-border" />
-              <a href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
-                  <span className="text-accent-foreground font-bold text-sm">O</span>
-                </div>
+              <Link to="/" className="flex items-center gap-2">
+                <OriginXLogo size="sm" animate={false} />
                 <span className="font-semibold text-lg tracking-tight">Playground</span>
-              </a>
+              </Link>
             </div>
 
             <ThemeToggle />
@@ -211,7 +253,7 @@ const Playground = () => {
         <div className="container mx-auto px-6">
           {/* Title */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
@@ -223,7 +265,7 @@ const Playground = () => {
 
           {/* Playground Container */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="relative"
@@ -257,21 +299,11 @@ const Playground = () => {
                       className="absolute top-full left-0 mt-2 w-72 glass rounded-xl border border-border/50 overflow-hidden z-20"
                     >
                       {endpoints.map((endpoint) => (
-                        <button
+                        <EndpointButton
                           key={endpoint.path}
-                          onClick={() => handleEndpointChange(endpoint)}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
-                        >
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                            endpoint.method === "POST" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"
-                          }`}>
-                            {endpoint.method}
-                          </span>
-                          <div>
-                            <p className="text-sm font-medium">{endpoint.name}</p>
-                            <p className="text-xs text-muted-foreground font-mono">{endpoint.path}</p>
-                          </div>
-                        </button>
+                          endpoint={endpoint}
+                          onSelect={() => handleEndpointChange(endpoint)}
+                        />
                       ))}
                     </motion.div>
                   )}
@@ -337,32 +369,19 @@ const Playground = () => {
               {/* Metrics Bar */}
               <div className="flex items-center justify-between px-6 py-4 bg-muted/30 border-t border-border/50">
                 <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <Zap className={`w-4 h-4 ${isLoading ? "text-accent animate-pulse" : "text-muted-foreground"}`} />
-                    <span className="text-sm">
-                      <span className="font-mono font-semibold text-foreground">{metrics.tokens}</span>
-                      <span className="text-muted-foreground"> tokens</span>
-                    </span>
-                  </div>
+                  <MetricDisplay icon={Zap} value={metrics.tokens} label="tokens" isAnimating={isLoading} />
                   <div className="h-4 w-px bg-border" />
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      <span className="font-mono font-semibold text-foreground">{metrics.latency}</span>
-                      <span className="text-muted-foreground">ms</span>
-                    </span>
-                  </div>
+                  <MetricDisplay icon={Clock} value={`${metrics.latency}ms`} label="" />
                   <div className="h-4 w-px bg-border" />
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      <span className="text-muted-foreground">Cost: </span>
-                      <span className="font-mono font-semibold text-accent">${metrics.cost.toFixed(5)}</span>
-                    </span>
-                  </div>
+                  <MetricDisplay 
+                    icon={DollarSign} 
+                    value={`$${metrics.cost.toFixed(5)}`} 
+                    label="" 
+                    accent 
+                  />
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  Routed via: {selectedEndpoint.path.includes("ai") ? "OpenAI GPT-4o" : selectedEndpoint.path.includes("payment") ? "Stripe" : "Twilio"}
+                  Routed via: {routedVia}
                 </span>
               </div>
             </div>

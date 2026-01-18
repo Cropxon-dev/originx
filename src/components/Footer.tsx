@@ -117,11 +117,12 @@ export const Footer = () => {
           {/* Bottom */}
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-border/30">
             <div className="text-center md:text-left mb-4 md:mb-0">
-              <p className="text-sm text-muted-foreground">
-                © 2025 OriginX. All rights reserved.
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                OriginX - A Product Division of{" "}
+              <div className="flex items-center gap-2 justify-center md:justify-start mb-1">
+                <OriginXLogo size="sm" animate={false} />
+                <span className="text-sm text-muted-foreground">© 2025 All rights reserved.</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A Product Division of{" "}
                 <a 
                   href="https://www.cropxon.com" 
                   target="_blank" 
