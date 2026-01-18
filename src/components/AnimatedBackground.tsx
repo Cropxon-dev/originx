@@ -20,11 +20,11 @@ const generateParticles = (count: number): Particle[] => {
   }));
 };
 
-const particles = generateParticles(6);
+const particles = generateParticles(3);
 
 export const AnimatedBackground = () => {
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       {/* Base gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background" />
       

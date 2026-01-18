@@ -11,10 +11,10 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative flex flex-col">
       <AnimatedBackground />
       <Header />
-      <main className="relative z-10">
+      <main className="relative z-10 flex-1 pt-16">
         <HeroSection />
         <HowItWorks />
         <WhyOriginX />
