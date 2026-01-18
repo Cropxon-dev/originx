@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { HowItWorks } from "@/components/HowItWorks";
@@ -8,20 +10,65 @@ import { SecuritySection } from "@/components/SecuritySection";
 import { CtaSection } from "@/components/CtaSection";
 import { Footer } from "@/components/Footer";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { SplashScreen } from "@/components/SplashScreen";
+import { useSplashScreen } from "@/hooks/useSplashScreen";
 
 const Index = () => {
+  const location = useLocation();
+  const { showSplash, isReady, completeSplash } = useSplashScreen();
+
+  // Handle scroll to section from navigation
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const sectionId = location.state.scrollTo;
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 100);
+      // Clear the state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  if (!isReady) {
+    return null;
+  }
+
+  if (showSplash) {
+    return <SplashScreen onComplete={completeSplash} />;
+  }
+
   return (
     <div className="min-h-screen bg-background relative flex flex-col">
       <AnimatedBackground />
       <Header />
       <main className="relative z-10 flex-1 pt-16">
-        <HeroSection />
-        <HowItWorks />
-        <WhyOriginX />
-        <ApiCategories />
-        <PlaygroundTeaser />
-        <SecuritySection />
-        <CtaSection />
+        <section id="hero">
+          <HeroSection />
+        </section>
+        <section id="how-it-works">
+          <HowItWorks />
+        </section>
+        <section id="why">
+          <WhyOriginX />
+        </section>
+        <section id="apis">
+          <ApiCategories />
+        </section>
+        <section id="playground">
+          <PlaygroundTeaser />
+        </section>
+        <section id="security">
+          <SecuritySection />
+        </section>
+        <section id="pricing">
+          <CtaSection />
+        </section>
       </main>
       <Footer />
     </div>

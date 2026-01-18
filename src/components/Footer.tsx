@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { OriginXLogo } from "./OriginXLogo";
+import { Twitter, Github, MessageCircle } from "lucide-react";
 
 const footerLinks = {
   Product: [
     { label: "APIs", href: "/marketplace" },
-    { label: "Docs", href: "/dashboard/docs" },
+    { label: "Docs", href: "#docs" },
     { label: "Pricing", href: "#pricing" },
     { label: "Playground", href: "/playground" },
   ],
@@ -24,12 +25,34 @@ const footerLinks = {
   Legal: [
     { label: "Privacy", href: "#" },
     { label: "Terms", href: "#" },
-    { label: "Security", href: "#" },
+    { label: "Security", href: "#security" },
     { label: "Compliance", href: "#" },
   ],
 };
 
 export const Footer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#") && href !== "#") {
+      e.preventDefault();
+      const sectionId = href.substring(1);
+      
+      if (location.pathname !== "/") {
+        navigate("/", { state: { scrollTo: sectionId } });
+      } else {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }
+    }
+  };
+
   return (
     <footer className="relative z-10 py-16 border-t border-border/50 bg-background">
       <div className="container mx-auto px-6">
@@ -78,7 +101,8 @@ export const Footer = () => {
                       ) : (
                         <a
                           href={link.href}
-                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                          onClick={(e) => handleAnchorClick(e, link.href)}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
                         >
                           {link.label}
                         </a>
@@ -108,15 +132,27 @@ export const Footer = () => {
                 </a>
               </p>
             </div>
-            <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Twitter
+            <div className="flex items-center gap-4">
+              <a 
+                href="#" 
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                GitHub
+              <a 
+                href="#" 
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Discord
+              <a 
+                href="#" 
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                aria-label="Discord"
+              >
+                <MessageCircle className="w-5 h-5" />
               </a>
             </div>
           </div>

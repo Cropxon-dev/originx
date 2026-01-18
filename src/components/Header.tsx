@@ -1,22 +1,45 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Store, Info, FileText, DollarSign, Users, Gamepad2 } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 import { OriginXLogo } from "./OriginXLogo";
 
 const navLinks = [
-  { label: "Marketplace", href: "/marketplace", isRoute: true },
-  { label: "About", href: "/about", isRoute: true },
-  { label: "Docs", href: "#docs" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Publishers", href: "/publisher", isRoute: true },
+  { label: "Marketplace", href: "/marketplace", isRoute: true, icon: Store },
+  { label: "About", href: "/about", isRoute: true, icon: Info },
+  { label: "Docs", href: "#docs", isRoute: false, icon: FileText },
+  { label: "Pricing", href: "#pricing", isRoute: false, icon: DollarSign },
+  { label: "Publishers", href: "/publisher", isRoute: true, icon: Users },
 ];
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const sectionId = href.substring(1);
+      
+      if (location.pathname !== "/") {
+        // Navigate to home with state to scroll
+        navigate("/", { state: { scrollTo: sectionId } });
+      } else {
+        // Already on home, just scroll
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }
+      setMobileMenuOpen(false);
+    }
+  };
 
   return (
     <motion.header
@@ -33,30 +56,35 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              link.isRoute ? (
+          <nav className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              return link.isRoute ? (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
                 >
+                  <Icon className="w-4 h-4" />
                   {link.label}
                 </Link>
               ) : (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                  onClick={(e) => handleAnchorClick(e, link.href)}
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
                 >
+                  <Icon className="w-4 h-4" />
                   {link.label}
                 </a>
-              )
-            ))}
+              );
+            })}
             <Link
               to="/playground"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
+              <Gamepad2 className="w-4 h-4" />
               Playground
             </Link>
           </nav>
@@ -93,32 +121,36 @@ export const Header = () => {
             className="md:hidden py-4 border-t border-border/30"
           >
             <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                link.isRoute ? (
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                return link.isRoute ? (
                   <Link
                     key={link.label}
                     to={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
+                    <Icon className="w-4 h-4" />
                     {link.label}
                   </Link>
                 ) : (
                   <a
                     key={link.label}
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => handleAnchorClick(e, link.href)}
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
+                    <Icon className="w-4 h-4" />
                     {link.label}
                   </a>
-                )
-              ))}
+                );
+              })}
               <Link
                 to="/playground"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
+                <Gamepad2 className="w-4 h-4" />
                 Playground
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border/30">
