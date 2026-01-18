@@ -1,1 +1,4 @@
 project_id = "eemwpxtetjryqrcqrucd"
+
+[functions.send-publisher-request]
+verify_jwt = false
