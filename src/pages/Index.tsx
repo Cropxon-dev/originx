@@ -10,12 +10,9 @@ import { SecuritySection } from "@/components/SecuritySection";
 import { CtaSection } from "@/components/CtaSection";
 import { Footer } from "@/components/Footer";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
-import { SplashScreen } from "@/components/SplashScreen";
-import { useSplashScreen } from "@/hooks/useSplashScreen";
 
 const Index = () => {
   const location = useLocation();
-  const { showSplash, isReady, completeSplash } = useSplashScreen();
 
   // Handle scroll to section from navigation
   useEffect(() => {
@@ -34,14 +31,6 @@ const Index = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
-  if (!isReady) {
-    return null;
-  }
-
-  if (showSplash) {
-    return <SplashScreen onComplete={completeSplash} />;
-  }
 
   return (
     <div className="min-h-screen bg-background relative flex flex-col">
