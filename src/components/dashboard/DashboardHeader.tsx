@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OriginXLogo } from "@/components/OriginXLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
@@ -48,10 +49,7 @@ export function DashboardHeader({
       <div className="flex items-center justify-between h-full px-4 lg:px-6">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 mr-8">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
-            <span className="text-accent-foreground font-bold text-sm">O</span>
-          </div>
-          <span className="font-semibold text-lg tracking-tight hidden sm:inline">OriginX</span>
+          <OriginXLogo size="md" showText animate={false} />
         </Link>
 
         {/* Global Search */}
