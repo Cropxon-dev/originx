@@ -167,3 +167,78 @@
     border-width: 0.5px;
   }
 }
+
+/* Reduced Motion - Disable all animations */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduce-motion .animate-pulse,
+.reduce-motion .animate-spin,
+.reduce-motion .animate-bounce,
+.reduce-motion .animate-ping {
+  animation: none !important;
+}
+
+/* Low Effects - Reduce visual effects for performance */
+.low-effects .glow-sm,
+.low-effects .glow-md,
+.low-effects .glow-lg {
+  box-shadow: none !important;
+}
+
+.low-effects .glass {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.low-effects .bg-grid {
+  background-image: none !important;
+}
+
+.low-effects .bg-radial-fade {
+  background: none !important;
+}
+
+.low-effects .blur-sm,
+.low-effects .blur-md,
+.low-effects .blur-lg,
+.low-effects .blur-xl,
+.low-effects .blur-2xl,
+.low-effects .blur-3xl,
+.low-effects [class*="blur-"] {
+  filter: none !important;
+}
+
+.low-effects .backdrop-blur-sm,
+.low-effects .backdrop-blur-md,
+.low-effects .backdrop-blur-lg,
+.low-effects .backdrop-blur-xl,
+.low-effects .backdrop-blur-2xl,
+.low-effects .backdrop-blur-3xl,
+.low-effects [class*="backdrop-blur-"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.low-effects .shadow-sm,
+.low-effects .shadow-md,
+.low-effects .shadow-lg,
+.low-effects .shadow-xl,
+.low-effects .shadow-2xl {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+
+/* Combined reduce-motion and low-effects */
+.reduce-motion.low-effects *,
+.reduce-motion .low-effects * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
