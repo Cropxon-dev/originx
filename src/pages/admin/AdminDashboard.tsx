@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OriginXLogo } from "@/components/OriginXLogo";
 import { useUserRoles } from "@/hooks/useRealtimeUsage";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -40,15 +41,12 @@ function AdminSidebar() {
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 border-r border-border bg-background flex flex-col">
       <div className="p-4 border-b border-border">
-        <Link to="/" className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-            <Shield className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold leading-tight">OriginX Admin</span>
-            <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
-          </div>
+        <Link to="/" className="inline-block mb-4">
+          <OriginXLogo size="md" showText showSubtext />
         </Link>
+        <div className="flex items-center gap-2 mb-3">
+          <Badge className="bg-red-500/10 text-red-500 border-red-500/20 text-xs">Admin Panel</Badge>
+        </div>
         <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="w-full justify-start">
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back to Dashboard

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OriginXLogo } from "@/components/OriginXLogo";
 import { useUserRoles } from "@/hooks/useRealtimeUsage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -39,15 +40,10 @@ function PublisherSidebar() {
     <aside className="fixed left-0 top-0 bottom-0 w-64 border-r border-border bg-background flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-border">
-        <Link to="/" className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
-            <span className="text-accent-foreground font-bold text-sm">O</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold leading-tight">OriginX Publisher</span>
-            <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
-          </div>
+        <Link to="/" className="inline-block mb-4">
+          <OriginXLogo size="md" showText showSubtext />
         </Link>
+        <p className="text-xs text-muted-foreground mb-3">Publisher Console</p>
         <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="w-full justify-start">
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back to Dashboard

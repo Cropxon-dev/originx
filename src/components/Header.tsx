@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { OriginXLogo } from "./OriginXLogo";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace", isRoute: true },
@@ -28,13 +29,7 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-sm">O</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-lg tracking-tight leading-tight">OriginX</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
-            </div>
+            <OriginXLogo size="md" showText showSubtext />
           </Link>
 
           {/* Desktop Navigation */}

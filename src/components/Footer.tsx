@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { OriginXLogo } from "./OriginXLogo";
 
 const footerLinks = {
   Product: [
@@ -41,14 +42,8 @@ export const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             {/* Logo & Description */}
             <div className="col-span-2 md:col-span-1">
-              <Link to="/" className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
-                  <span className="text-accent-foreground font-bold text-sm">O</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-lg tracking-tight leading-tight">OriginX</span>
-                  <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
-                </div>
+              <Link to="/" className="inline-block mb-4">
+                <OriginXLogo size="md" showText showSubtext animate={false} />
               </Link>
               <p className="text-sm text-muted-foreground mb-4">
                 The universal API hub for modern developers.
