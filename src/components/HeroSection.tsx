@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Book } from "lucide-react";
 import { ApiFlowDiagram } from "./ApiFlowDiagram";
@@ -7,29 +7,32 @@ import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 overflow-hidden px-4 sm:px-6">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-radial-fade" />
-      
-      {/* Animated glow orbs */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-accent/20 rounded-full blur-3xl"
-      />
-      <motion.div
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.15, 0.3, 0.15],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-glow-secondary/20 rounded-full blur-3xl"
-      />
+      <div className="absolute inset-0 bg-radial-fade" aria-hidden />
+
+      {/* Calm, Apple-like glow (reduced motion friendly) */}
+      {!prefersReducedMotion && (
+        <>
+          <motion.div
+            animate={{ scale: [1, 1.08, 1], opacity: [0.16, 0.28, 0.16] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-accent/15 rounded-full blur-3xl transform-gpu"
+            style={{ willChange: "transform, opacity" }}
+            aria-hidden
+          />
+          <motion.div
+            animate={{ scale: [1.06, 1, 1.06], opacity: [0.12, 0.22, 0.12] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-glow-secondary/15 rounded-full blur-3xl transform-gpu"
+            style={{ willChange: "transform, opacity" }}
+            aria-hidden
+          />
+        </>
+      )}
 
       <div className="container mx-auto relative z-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -66,7 +69,12 @@ export const HeroSection = () => {
           {/* CTAs */}
           <ScrollReveal delay={0.5}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Button variant="hero" size="xl" onClick={() => navigate("/auth")} className="w-full sm:w-auto">
+              <Button
+                variant="hero"
+                size="xl"
+                onClick={() => navigate("/auth")}
+                className="w-full sm:w-auto"
+              >
                 Get API Key
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
@@ -86,3 +94,4 @@ export const HeroSection = () => {
     </section>
   );
 };
+
