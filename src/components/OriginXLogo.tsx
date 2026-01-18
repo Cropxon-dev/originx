@@ -104,8 +104,8 @@ export function OriginXLogo({
             OriginX
           </span>
           {showSubtext && (
-            <span className="text-[10px] text-muted-foreground leading-tight">
-              BY CROPXON
+            <span className="text-[9px] text-muted-foreground leading-tight uppercase tracking-wider">
+              By Cropxon Innovations
             </span>
           )}
         </motion.div>
