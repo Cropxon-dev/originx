@@ -22,6 +22,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
+    // Add transition class before changing theme
+    root.style.setProperty('--theme-transition', '1');
     root.classList.remove("light", "dark");
     root.classList.add(theme);
     localStorage.setItem("originx-theme", theme);
