@@ -1,34 +1,35 @@
 import { useState, useEffect } from "react";
 
 const SPLASH_SHOWN_KEY = "originx_splash_shown";
-const SPLASH_EXPIRY_KEY = "originx_splash_expiry";
-const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
 
 export function useSplashScreen() {
-  const [showSplash, setShowSplash] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Check if splash was recently shown
-    const splashShown = sessionStorage.getItem(SPLASH_SHOWN_KEY);
-    const splashExpiry = sessionStorage.getItem(SPLASH_EXPIRY_KEY);
-    const now = Date.now();
-
-    if (splashShown && splashExpiry && now < parseInt(splashExpiry)) {
-      // Splash was shown recently, skip it
-      setShowSplash(false);
-      setIsReady(true);
-    } else {
-      // Show splash screen
+    // Check if this is a fresh page load (not a client-side navigation)
+    const navigationEntries = performance.getEntriesByType("navigation");
+    const navigationType = (navigationEntries[0] as PerformanceNavigationTiming)?.type;
+    
+    // Show splash on reload, navigate (fresh load), or if no session marker
+    const isPageRefresh = navigationType === "reload" || navigationType === "navigate";
+    const hasSeenSplash = sessionStorage.getItem(SPLASH_SHOWN_KEY);
+    
+    if (isPageRefresh || !hasSeenSplash) {
+      // Clear the marker on refresh so splash shows
+      if (isPageRefresh) {
+        sessionStorage.removeItem(SPLASH_SHOWN_KEY);
+      }
       setShowSplash(true);
-      setIsReady(true);
+    } else {
+      setShowSplash(false);
     }
+    
+    setIsReady(true);
   }, []);
 
   const completeSplash = () => {
-    // Mark splash as shown for this session
     sessionStorage.setItem(SPLASH_SHOWN_KEY, "true");
-    sessionStorage.setItem(SPLASH_EXPIRY_KEY, (Date.now() + SESSION_DURATION).toString());
     setShowSplash(false);
   };
 
