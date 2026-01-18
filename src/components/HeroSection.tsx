@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Book } from "lucide-react";
 import { ApiFlowDiagram } from "./ApiFlowDiagram";
 import { ScrollReveal } from "./ScrollReveal";
+import { HeroVideoBackground } from "./HeroVideoBackground";
 import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
@@ -11,8 +12,11 @@ export const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 overflow-hidden px-2 sm:px-4 md:px-6">
+      {/* Animated Video Background */}
+      {!prefersReducedMotion && <HeroVideoBackground />}
+
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-radial-fade" aria-hidden />
+      <div className="absolute inset-0 bg-radial-fade z-[1]" aria-hidden />
 
       {/* Calm glow effects */}
       {!prefersReducedMotion && (

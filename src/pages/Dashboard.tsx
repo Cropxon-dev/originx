@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, Coins, DollarSign, Layers, Play, Code, Settings } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { UsageChart } from "@/components/dashboard/UsageChart";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
@@ -16,6 +17,7 @@ type ApiKey = Tables<"api_keys">;
 const Dashboard = () => {
   const navigate = useNavigate();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [environment] = useState<'sandbox' | 'production'>('sandbox');
   const { metrics, isLoading: metricsLoading } = useRealtimeUsage(environment);
 
@@ -25,6 +27,7 @@ const Dashboard = () => {
 
   const fetchApiKeys = async () => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("api_keys")
         .select("*")
@@ -34,8 +37,11 @@ const Dashboard = () => {
       setApiKeys(data || []);
     } catch (error: any) {
       console.error("Failed to fetch API keys:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   // Format large numbers
   const formatNumber = (num: number) => {
@@ -43,6 +49,15 @@ const Dashboard = () => {
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
   };
+
+  // Show skeleton while loading
+  if (isLoading || metricsLoading) {
+    return (
+      <DashboardLayout>
+        <DashboardSkeleton />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -55,7 +70,6 @@ const Dashboard = () => {
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
           Monitor your API usage, manage keys, and control costs.
-          {metricsLoading && <span className="ml-2 text-xs">(Loading live data...)</span>}
         </p>
       </motion.div>
 
