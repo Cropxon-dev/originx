@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { MobileFilterDrawer } from "@/components/MobileFilterDrawer";
 
 // Complete API Categories Data
 const apiCategories = [
@@ -367,7 +368,6 @@ export default function Marketplace() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["ai"]);
-  const [showFilters, setShowFilters] = useState(true);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
     pricing: [],
     provider: [],
@@ -392,6 +392,17 @@ export default function Marketplace() {
         ? prev[filterGroup].filter((id) => id !== filterId)
         : [...prev[filterGroup], filterId],
     }));
+  };
+
+  const clearAllFilters = () => {
+    setSelectedFilters({
+      pricing: [],
+      provider: [],
+      auth: [],
+      sla: [],
+      region: [],
+      compliance: [],
+    });
   };
 
   const totalActiveFilters = Object.values(selectedFilters).flat().length;
@@ -424,26 +435,49 @@ export default function Marketplace() {
       
       <main className="pt-20">
         {/* Hero Banner */}
-        <section className="relative py-16 border-b border-border overflow-hidden">
+        <section className="relative py-8 sm:py-12 lg:py-16 border-b border-border overflow-hidden">
           <div className="absolute inset-0 bg-radial-fade opacity-50" />
-          <div className="container mx-auto px-6 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <ScrollReveal>
               <div className="max-w-3xl">
-                <h1 className="text-display-lg mb-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-display-lg mb-3 sm:mb-4">
                   API <span className="text-gradient">Marketplace</span>
                 </h1>
-                <p className="text-body-lg text-muted-foreground mb-6">
+                <p className="text-sm sm:text-base lg:text-body-lg text-muted-foreground mb-4 sm:mb-6">
                   Discover 700+ APIs across 15 categories. One unified gateway, one API key, infinite possibilities.
                 </p>
                 
                 {/* Search Bar */}
                 <div className="relative max-w-xl">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                   <Input
                     placeholder="Search APIs, categories, or use cases..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-4 py-6 text-lg bg-card border-border"
+                    className="pl-10 sm:pl-12 pr-4 py-5 sm:py-6 text-sm sm:text-lg bg-card border-border"
+                  />
+                </div>
+
+                {/* Mobile Filter Button */}
+                <div className="mt-4 lg:hidden">
+                  <MobileFilterDrawer
+                    categories={apiCategories}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    selectedModule={selectedModule}
+                    setSelectedModule={setSelectedModule}
+                    expandedCategories={expandedCategories}
+                    toggleCategory={toggleCategory}
+                    selectedFilters={selectedFilters}
+                    toggleFilter={toggleFilter}
+                    totalActiveFilters={totalActiveFilters}
+                    clearAllFilters={clearAllFilters}
+                    pricingFilters={pricingFilters}
+                    providerFilters={providerFilters}
+                    authFilters={authFilters}
+                    slaFilters={slaFilters}
+                    regionFilters={regionFilters}
+                    complianceFilters={complianceFilters}
                   />
                 </div>
               </div>
@@ -453,10 +487,10 @@ export default function Marketplace() {
 
         {/* Main Content */}
         <div className="flex">
-          {/* Sidebar */}
-          <aside className="w-80 border-r border-border min-h-[calc(100vh-12rem)] hidden lg:block">
+          {/* Sidebar - Hidden on mobile */}
+          <aside className="w-72 xl:w-80 border-r border-border min-h-[calc(100vh-12rem)] hidden lg:block flex-shrink-0">
             <ScrollArea className="h-[calc(100vh-12rem)]">
-              <div className="p-6">
+              <div className="p-4 xl:p-6">
                 {/* Filter Toggle */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
@@ -472,16 +506,7 @@ export default function Marketplace() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() =>
-                        setSelectedFilters({
-                          pricing: [],
-                          provider: [],
-                          auth: [],
-                          sla: [],
-                          region: [],
-                          compliance: [],
-                        })
-                      }
+                      onClick={clearAllFilters}
                     >
                       Clear all
                     </Button>
@@ -490,7 +515,6 @@ export default function Marketplace() {
 
                 {/* Filter Groups */}
                 <div className="space-y-6">
-                  {/* Pricing */}
                   <FilterGroup
                     title="Pricing"
                     options={pricingFilters}
@@ -498,7 +522,6 @@ export default function Marketplace() {
                     onToggle={(id) => toggleFilter("pricing", id)}
                   />
 
-                  {/* Provider Type */}
                   <FilterGroup
                     title="Provider Type"
                     options={providerFilters}
@@ -506,7 +529,6 @@ export default function Marketplace() {
                     onToggle={(id) => toggleFilter("provider", id)}
                   />
 
-                  {/* Auth Type */}
                   <FilterGroup
                     title="Auth Type"
                     options={authFilters}
@@ -514,7 +536,6 @@ export default function Marketplace() {
                     onToggle={(id) => toggleFilter("auth", id)}
                   />
 
-                  {/* SLA */}
                   <FilterGroup
                     title="SLA & Reliability"
                     options={slaFilters}
@@ -522,7 +543,6 @@ export default function Marketplace() {
                     onToggle={(id) => toggleFilter("sla", id)}
                   />
 
-                  {/* Region */}
                   <FilterGroup
                     title="Region"
                     options={regionFilters}
@@ -530,7 +550,6 @@ export default function Marketplace() {
                     onToggle={(id) => toggleFilter("region", id)}
                   />
 
-                  {/* Compliance */}
                   <FilterGroup
                     title="Compliance"
                     options={complianceFilters}
@@ -617,33 +636,33 @@ export default function Marketplace() {
           </aside>
 
           {/* Main Content Area */}
-          <div className="flex-1">
-            <div className="p-6">
+          <div className="flex-1 min-w-0">
+            <div className="p-4 sm:p-6">
               {/* Breadcrumb & Results Count */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>All APIs</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground overflow-x-auto">
+                  <span className="flex-shrink-0">All APIs</span>
                   {selectedCategoryData && (
                     <>
-                      <ChevronRight className="w-4 h-4" />
-                      <span className="text-foreground">{selectedCategoryData.name}</span>
+                      <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-foreground flex-shrink-0">{selectedCategoryData.name}</span>
                     </>
                   )}
                   {selectedModule && (
                     <>
-                      <ChevronRight className="w-4 h-4" />
-                      <span className="text-foreground">{selectedModule}</span>
+                      <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-foreground flex-shrink-0">{selectedModule}</span>
                     </>
                   )}
                 </div>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">
                   {filteredApis.length} APIs found
                 </span>
               </div>
 
               {/* Category Cards (when no category selected) */}
               {!selectedCategory && (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
                   {apiCategories.slice(0, 6).map((category, index) => (
                     <motion.button
                       key={category.id}
@@ -656,26 +675,26 @@ export default function Marketplace() {
                           toggleCategory(category.id);
                         }
                       }}
-                      className="p-6 rounded-xl border border-border bg-card hover:border-accent/50 transition-all text-left group"
+                      className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-accent/50 transition-all text-left group"
                     >
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-4`}>
-                        <category.icon className="w-6 h-6 text-white" />
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-3 sm:mb-4`}>
+                        <category.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                       </div>
-                      <h3 className="font-semibold mb-1 group-hover:text-accent transition-colors">
+                      <h3 className="font-semibold text-sm sm:text-base mb-1 group-hover:text-accent transition-colors line-clamp-1">
                         {category.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-3">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">
                         {category.modules.length} modules · {category.apiCount} APIs
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {category.modules.slice(0, 3).map((module) => (
-                          <Badge key={module.name} variant="secondary" className="text-xs">
+                        {category.modules.slice(0, 2).map((module) => (
+                          <Badge key={module.name} variant="secondary" className="text-[10px] sm:text-xs">
                             {module.name}
                           </Badge>
                         ))}
-                        {category.modules.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{category.modules.length - 3}
+                        {category.modules.length > 2 && (
+                          <Badge variant="secondary" className="text-[10px] sm:text-xs">
+                            +{category.modules.length - 2}
                           </Badge>
                         )}
                       </div>
@@ -685,8 +704,8 @@ export default function Marketplace() {
               )}
 
               {/* API Listings */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="font-semibold text-base sm:text-lg">
                   {selectedModule
                     ? `${selectedModule} APIs`
                     : selectedCategoryData
@@ -700,41 +719,42 @@ export default function Marketplace() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-4 rounded-xl border border-border bg-card hover:border-accent/30 transition-all group"
+                    className="p-3 sm:p-4 rounded-xl border border-border bg-card hover:border-accent/30 transition-all group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h4 className="font-semibold group-hover:text-accent transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <h4 className="font-semibold text-sm sm:text-base group-hover:text-accent transition-colors">
                             {api.name}
                           </h4>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-[10px] sm:text-xs">
                             {api.module}
                           </Badge>
                           {api.provider === "OriginX Native" && (
-                            <Badge className="text-xs bg-accent/10 text-accent border-accent/20">
+                            <Badge className="text-[10px] sm:text-xs bg-accent/10 text-accent border-accent/20">
                               <Zap className="w-3 h-3 mr-1" />
                               Native
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">
                           {api.description}
                         </p>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <CreditCard className="w-3 h-3" />
-                            {api.pricing}
+                            <span className="hidden xs:inline">{api.pricing}</span>
+                            <span className="xs:hidden">{api.pricing.split('/')[0]}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Shield className="w-3 h-3" />
-                            {api.sla} SLA
+                            {api.sla}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="hidden sm:flex items-center gap-1">
                             <Lock className="w-3 h-3" />
                             {api.auth}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="hidden md:flex items-center gap-1">
                             <Server className="w-3 h-3" />
                             {api.calls}
                           </div>
@@ -744,7 +764,11 @@ export default function Marketplace() {
                           </div>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full sm:w-auto group-hover:bg-accent group-hover:text-accent-foreground transition-colors text-xs sm:text-sm"
+                      >
                         View Docs
                         <ExternalLink className="w-3 h-3 ml-1" />
                       </Button>

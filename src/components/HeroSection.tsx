@@ -9,7 +9,7 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 overflow-hidden px-4 sm:px-6">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-radial-fade" />
       
@@ -20,7 +20,7 @@ export const HeroSection = () => {
           opacity: [0.2, 0.4, 0.2],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
+        className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-accent/20 rounded-full blur-3xl"
       />
       <motion.div
         animate={{
@@ -28,22 +28,22 @@ export const HeroSection = () => {
           opacity: [0.15, 0.3, 0.15],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-glow-secondary/20 rounded-full blur-3xl"
+        className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-glow-secondary/20 rounded-full blur-3xl"
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <ScrollReveal delay={0.1}>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-muted-foreground mb-8">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full glass text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-accent animate-pulse" />
               Now in Public Beta
             </span>
           </ScrollReveal>
 
           {/* Main Headline */}
           <ScrollReveal delay={0.2}>
-            <h1 className="text-display-lg md:text-display-xl mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-display-lg lg:text-display-xl mb-4 sm:mb-6">
               One API.{" "}
               <span className="text-gradient">Every Capability.</span>
             </h1>
@@ -51,27 +51,27 @@ export const HeroSection = () => {
 
           {/* Subheadline */}
           <ScrollReveal delay={0.3}>
-            <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto mb-4">
+            <p className="text-sm sm:text-base lg:text-body-lg text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4">
               Access AI, Payments, Messaging, Web, Finance, and more — through a single, unified API layer.
             </p>
           </ScrollReveal>
 
           {/* Supporting Line */}
           <ScrollReveal delay={0.4}>
-            <p className="text-sm text-muted-foreground/70 mb-10">
+            <p className="text-xs sm:text-sm text-muted-foreground/70 mb-8 sm:mb-10">
               No more juggling keys. No more vendor lock-in. Just build.
             </p>
           </ScrollReveal>
 
           {/* CTAs */}
           <ScrollReveal delay={0.5}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button variant="hero" size="xl" onClick={() => navigate("/auth")}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Button variant="hero" size="xl" onClick={() => navigate("/auth")} className="w-full sm:w-auto">
                 Get API Key
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <Button variant="hero-secondary" size="xl">
-                <Book className="w-5 h-5" />
+              <Button variant="hero-secondary" size="xl" className="w-full sm:w-auto">
+                <Book className="w-4 h-4 sm:w-5 sm:h-5" />
                 View Documentation
               </Button>
             </div>
@@ -79,7 +79,7 @@ export const HeroSection = () => {
         </div>
 
         {/* API Flow Diagram */}
-        <ScrollReveal delay={0.7} className="mt-20 max-w-5xl mx-auto">
+        <ScrollReveal delay={0.7} className="mt-12 sm:mt-16 lg:mt-20 max-w-5xl mx-auto">
           <ApiFlowDiagram />
         </ScrollReveal>
       </div>
