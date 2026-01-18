@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { 
   Brain, 
   CreditCard, 
@@ -9,6 +8,7 @@ import {
   Building2,
   ArrowRight
 } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
 
 const categories = [
   {
@@ -69,51 +69,45 @@ export const ApiCategories = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-20"
-        >
+        <ScrollReveal className="text-center mb-20">
           <h2 className="text-display mb-4">Every API You Need</h2>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
             50+ providers across 7 categories. All accessible through one unified endpoint.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
           {categories.map((category, index) => (
-            <motion.a
+            <ScrollReveal
               key={category.name}
-              href="#"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
-              className="group relative"
+              delay={index * 0.08}
             >
-              <div className="h-full p-5 rounded-xl border border-border/50 bg-card/30 hover:bg-card/60 hover:border-accent/30 transition-all duration-300">
-                {/* Icon with gradient background */}
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${category.gradient} flex items-center justify-center mb-4`}>
-                  <category.icon className="w-5 h-5 text-white" />
+              <a
+                href="#"
+                className="group relative block"
+              >
+                <div className="h-full p-5 rounded-xl border border-border/50 bg-card/30 hover:bg-card/60 hover:border-accent/30 transition-all duration-300">
+                  {/* Icon with gradient background */}
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${category.gradient} flex items-center justify-center mb-4`}>
+                    <category.icon className="w-5 h-5 text-white" />
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="font-semibold mb-1">{category.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{category.description}</p>
+                  
+                  {/* Footer */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground/70">{category.count}</span>
+                    <span className="flex items-center gap-1 text-xs text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      Explore
+                      <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
                 </div>
-                
-                {/* Content */}
-                <h3 className="font-semibold mb-1">{category.name}</h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{category.description}</p>
-                
-                {/* Footer */}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground/70">{category.count}</span>
-                  <span className="flex items-center gap-1 text-xs text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Explore
-                    <ArrowRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </div>
-            </motion.a>
+              </a>
+            </ScrollReveal>
           ))}
         </div>
       </div>

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Lock, Clock, FileText, Globe2, ShieldCheck } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
 
 const securityFeatures = [
   { icon: Lock, label: "API Key Scoping" },
@@ -16,50 +16,28 @@ export const SecuritySection = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
+          <ScrollReveal className="text-center mb-16">
             <h2 className="text-display mb-4">Enterprise Security</h2>
             <p className="text-body-lg text-muted-foreground">
               Built for teams that take security seriously. SOC 2 Type II compliant infrastructure.
             </p>
-          </motion.div>
+          </ScrollReveal>
 
           {/* Security Features */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap items-center justify-center gap-4"
-          >
+          <ScrollReveal delay={0.2} className="flex flex-wrap items-center justify-center gap-4">
             {securityFeatures.map((feature, index) => (
-              <motion.div
+              <div
                 key={feature.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
                 className="flex items-center gap-3 px-5 py-3 rounded-full glass border-border/50"
               >
                 <feature.icon className="w-4 h-4 text-accent" />
                 <span className="text-sm font-medium">{feature.label}</span>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </ScrollReveal>
 
           {/* Billing Philosophy */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-24 text-center"
-          >
+          <ScrollReveal delay={0.4} className="mt-24 text-center">
             <h3 className="text-title mb-4">Simple, Transparent Pricing</h3>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
               Pay only for what you use. We charge pass-through costs from providers plus a minimal margin. 
@@ -81,7 +59,7 @@ export const SecuritySection = () => {
                 <p className="text-sm text-muted-foreground">Transparent</p>
               </div>
             </div>
-          </motion.div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

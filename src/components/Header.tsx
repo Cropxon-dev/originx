@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navLinks = [
   { label: "APIs", href: "#apis" },
@@ -12,6 +14,7 @@ const navLinks = [
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <motion.header
@@ -23,12 +26,12 @@ export const Header = () => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-glow-secondary flex items-center justify-center">
               <span className="text-accent-foreground font-bold text-sm">O</span>
             </div>
             <span className="font-semibold text-lg tracking-tight">OriginX</span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
@@ -41,25 +44,35 @@ export const Header = () => {
                 {link.label}
               </a>
             ))}
+            <Link
+              to="/playground"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              Playground
+            </Link>
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm">
+            <ThemeToggle />
+            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
               Sign In
             </Button>
-            <Button variant="hero" size="sm">
+            <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
               Get API Key
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-muted-foreground hover:text-foreground"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -76,15 +89,23 @@ export const Header = () => {
                   key={link.label}
                   href={link.href}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </a>
               ))}
+              <Link
+                to="/playground"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Playground
+              </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border/30">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
                   Sign In
                 </Button>
-                <Button variant="hero" size="sm">
+                <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
                   Get API Key
                 </Button>
               </div>
