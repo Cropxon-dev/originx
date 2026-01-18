@@ -1,5 +1,7 @@
 import { Key, CreditCard, Zap, Shield, Terminal, Layers } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
+import { OriginXLogoFilled } from "./OriginXLogo";
+import { memo } from "react";
 
 const features = [
   {
@@ -34,13 +36,16 @@ const features = [
   },
 ];
 
-export const WhyOriginX = () => {
+export const WhyOriginX = memo(() => {
   return (
     <section className="py-32 relative">
       <div className="container mx-auto px-6">
         {/* Header */}
         <ScrollReveal className="text-center mb-20">
-          <h2 className="text-display mb-4">Why OriginX</h2>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <OriginXLogoFilled size="md" className="text-foreground" />
+            <h2 className="text-display">Why OriginX</h2>
+          </div>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
             Infrastructure-grade reliability with startup-level simplicity. Built for teams who move fast.
           </p>
@@ -70,4 +75,6 @@ export const WhyOriginX = () => {
       </div>
     </section>
   );
-};
+});
+
+WhyOriginX.displayName = "WhyOriginX";

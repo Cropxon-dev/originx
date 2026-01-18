@@ -5,7 +5,9 @@ import { HeroSection } from "@/components/HeroSection";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WhyOriginX } from "@/components/WhyOriginX";
 import { ApiCategories } from "@/components/ApiCategories";
+import { ProvidersSection } from "@/components/ProvidersSection";
 import { PlaygroundTeaser } from "@/components/PlaygroundTeaser";
+import { DocsLandingSection } from "@/components/DocsLandingSection";
 import { SecuritySection } from "@/components/SecuritySection";
 import { CtaSection } from "@/components/CtaSection";
 import { Footer } from "@/components/Footer";
@@ -14,7 +16,6 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 const Index = () => {
   const location = useLocation();
 
-  // Handle scroll to section from navigation
   useEffect(() => {
     if (location.state?.scrollTo) {
       const sectionId = location.state.scrollTo;
@@ -27,7 +28,6 @@ const Index = () => {
           window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
       }, 100);
-      // Clear the state
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -49,8 +49,14 @@ const Index = () => {
         <section id="apis">
           <ApiCategories />
         </section>
+        <section id="providers">
+          <ProvidersSection />
+        </section>
         <section id="playground">
           <PlaygroundTeaser />
+        </section>
+        <section id="docs">
+          <DocsLandingSection />
         </section>
         <section id="security">
           <SecuritySection />

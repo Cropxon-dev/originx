@@ -1,30 +1,35 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Book, Sparkles } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { useNavigate } from "react-router-dom";
+import { OriginXLogo } from "./OriginXLogo";
 
 export const CtaSection = () => {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="py-32 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-radial-fade opacity-50" />
-      <motion.div
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.3, 0.2],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-3xl"
-      />
+      {!prefersReducedMotion && (
+        <motion.div
+          animate={{
+            scale: [1, 1.08, 1],
+            opacity: [0.15, 0.25, 0.15],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl"
+        />
+      )}
 
       <div className="container mx-auto px-6 relative z-10">
         <ScrollReveal className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-muted-foreground mb-8">
             <Sparkles className="w-4 h-4 text-accent" />
-            Join 1,000+ developers building with OriginX
+            <span>Join 1,000+ developers building with</span>
+            <OriginXLogo size="sm" animate={false} showText />
           </div>
 
           <h2 className="text-display-lg mb-6">
