@@ -16,10 +16,8 @@ type ApiKey = Tables<"api_keys">;
 const Dashboard = () => {
   const navigate = useNavigate();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
-  const [environment, setEnvironment] = useState<'sandbox' | 'production'>('sandbox');
+  const [environment] = useState<'sandbox' | 'production'>('sandbox');
   const { metrics, isLoading: metricsLoading } = useRealtimeUsage(environment);
-  const navigate = useNavigate();
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
 
   useEffect(() => {
     fetchApiKeys();
@@ -39,6 +37,13 @@ const Dashboard = () => {
     }
   };
 
+  // Format large numbers
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
+  };
+
   return (
     <DashboardLayout>
       {/* Page Header */}
@@ -50,6 +55,7 @@ const Dashboard = () => {
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
           Monitor your API usage, manage keys, and control costs.
+          {metricsLoading && <span className="ml-2 text-xs">(Loading live data...)</span>}
         </p>
       </motion.div>
 
@@ -78,36 +84,36 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* Metrics Grid */}
+      {/* Metrics Grid - Now using realtime data */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <MetricCard
           title="Requests Today"
-          value="24,847"
-          change={{ value: "+12.5%", trend: "up" }}
+          value={metrics.totalRequests > 0 ? formatNumber(metrics.totalRequests) : "0"}
+          change={{ value: metrics.totalRequests > 0 ? "+12.5%" : "—", trend: "up" }}
           icon={Zap}
-          description="vs yesterday"
+          description="realtime"
           delay={0}
         />
         <MetricCard
           title="Tokens Used"
-          value="1.2M"
-          change={{ value: "+8.2%", trend: "up" }}
+          value={metrics.totalTokens > 0 ? formatNumber(metrics.totalTokens) : "0"}
+          change={{ value: metrics.totalTokens > 0 ? "+8.2%" : "—", trend: "up" }}
           icon={Coins}
-          description="this month"
+          description="today"
           delay={0.05}
         />
         <MetricCard
           title="Current Spend"
-          value="$127.50"
-          change={{ value: "-3.1%", trend: "down" }}
+          value={`$${metrics.totalCost.toFixed(2)}`}
+          change={{ value: metrics.totalCost > 0 ? "-3.1%" : "—", trend: "down" }}
           icon={DollarSign}
           description="MTD"
           delay={0.1}
         />
         <MetricCard
           title="Active APIs"
-          value="12"
-          change={{ value: "+2", trend: "up" }}
+          value={metrics.activeApis.toString()}
+          change={{ value: metrics.activeApis > 0 ? `+${metrics.activeApis}` : "—", trend: "up" }}
           icon={Layers}
           description="subscribed"
           delay={0.15}
@@ -142,17 +148,22 @@ const Dashboard = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Total Requests</span>
-              <span className="font-mono font-medium">847,234</span>
+              <span className="font-mono font-medium">{formatNumber(metrics.totalRequests)}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
-              <div className="bg-accent h-2 rounded-full" style={{ width: "68%" }} />
+              <div 
+                className="bg-accent h-2 rounded-full transition-all duration-500" 
+                style={{ width: `${Math.min((metrics.totalRequests / 1250000) * 100, 100)}%` }} 
+              />
             </div>
-            <p className="text-xs text-muted-foreground">68% of monthly limit (1.25M)</p>
+            <p className="text-xs text-muted-foreground">
+              {((metrics.totalRequests / 1250000) * 100).toFixed(1)}% of monthly limit (1.25M)
+            </p>
             
             <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Estimated Bill</span>
-                <span className="font-mono font-medium text-lg">$247.80</span>
+                <span className="font-mono font-medium text-lg">${(metrics.totalCost * 30).toFixed(2)}</span>
               </div>
               <p className="text-xs text-muted-foreground">
                 Based on current usage pattern
@@ -161,12 +172,12 @@ const Dashboard = () => {
 
             <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Top API</span>
-                <span className="font-medium">GPT-4 Turbo</span>
+                <span className="text-sm text-muted-foreground">Avg Latency</span>
+                <span className="font-medium">{metrics.avgLatency.toFixed(0)}ms</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Top Category</span>
-                <span className="font-medium">AI & ML</span>
+                <span className="text-sm text-muted-foreground">Error Rate</span>
+                <span className="font-medium">{metrics.errorRate.toFixed(2)}%</span>
               </div>
             </div>
           </div>
