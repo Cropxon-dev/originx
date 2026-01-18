@@ -10,11 +10,11 @@ export const HeroSection = () => {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 overflow-hidden px-4 sm:px-6">
+    <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 overflow-hidden px-2 sm:px-4 md:px-6">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-radial-fade" aria-hidden />
 
-      {/* Calm, Apple-like glow (reduced motion friendly) */}
+      {/* Calm glow effects */}
       {!prefersReducedMotion && (
         <>
           <motion.div
@@ -34,7 +34,7 @@ export const HeroSection = () => {
         </>
       )}
 
-      <div className="container mx-auto relative z-10">
+      <div className="w-full max-w-7xl mx-auto relative z-10 px-1 sm:px-2">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <ScrollReveal delay={0.1}>
@@ -54,7 +54,7 @@ export const HeroSection = () => {
 
           {/* Subheadline */}
           <ScrollReveal delay={0.3}>
-            <p className="text-sm sm:text-base lg:text-body-lg text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4">
+            <p className="text-sm sm:text-base lg:text-body-lg text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4 px-2">
               Access AI, Payments, Messaging, Web, Finance, and more — through a single, unified API layer.
             </p>
           </ScrollReveal>
@@ -86,8 +86,8 @@ export const HeroSection = () => {
           </ScrollReveal>
         </div>
 
-        {/* API Flow Diagram */}
-        <ScrollReveal delay={0.7} className="mt-12 sm:mt-16 lg:mt-20 max-w-5xl mx-auto">
+        {/* API Flow Diagram - Full width with minimal padding */}
+        <ScrollReveal delay={0.7} className="mt-10 sm:mt-14 lg:mt-16 w-full">
           <ApiFlowDiagram />
         </ScrollReveal>
       </div>
