@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -9,9 +9,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useUserRoles } from "@/hooks/useRealtimeUsage";
+import { supabase } from "@/integrations/supabase/client";
+
+// Import admin pages
+import AdminUsersPage from "./AdminUsersPage";
+import AdminPublishersPage from "./AdminPublishersPage";
+import AdminApisPage from "./AdminApisPage";
+import AdminRoutingPage from "./AdminRoutingPage";
 
 const adminNavItems = [
   { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
@@ -37,7 +44,10 @@ function AdminSidebar() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
             <Shield className="w-4 h-4 text-white" />
           </div>
-          <span className="font-semibold">OriginX Admin</span>
+          <div className="flex flex-col">
+            <span className="font-semibold leading-tight">OriginX Admin</span>
+            <span className="text-[10px] text-muted-foreground leading-tight">BY CROPXON</span>
+          </div>
         </Link>
         <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="w-full justify-start">
           <ChevronLeft className="w-4 h-4 mr-2" />
@@ -69,6 +79,11 @@ function AdminSidebar() {
       </ScrollArea>
 
       <div className="p-4 border-t border-border">
+        <div className="text-xs text-muted-foreground mb-2">
+          <a href="https://www.cropxon.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            Cropxon Innovations Pvt. Ltd
+          </a>
+        </div>
         <ThemeToggle />
       </div>
     </aside>
@@ -111,7 +126,8 @@ function AdminOverview() {
               <stat.icon className="w-4 h-4 text-accent" />
               <span className={cn(
                 "text-xs",
-                stat.good || stat.change.startsWith("+") ? "text-green-500" : "text-red-500"
+                stat.good || stat.change.startsWith("-") && stat.label.includes("Error") ? "text-green-500" : 
+                stat.change.startsWith("+") ? "text-green-500" : "text-red-500"
               )}>
                 {stat.change}
               </span>
@@ -158,15 +174,19 @@ function AdminOverview() {
           <h2 className="font-semibold mb-4">Pending Actions</h2>
           <div className="space-y-3">
             {[
-              { action: "Publisher applications", count: 5 },
-              { action: "API reviews", count: 12 },
-              { action: "Abuse reports", count: 2 },
-              { action: "Payout requests", count: 8 },
+              { action: "Publisher applications", count: 5, href: "/admin/publishers" },
+              { action: "API reviews", count: 12, href: "/admin/apis" },
+              { action: "Abuse reports", count: 2, href: "/admin/usage" },
+              { action: "Payout requests", count: 8, href: "/admin/billing" },
             ].map((item) => (
-              <div key={item.action} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+              <Link 
+                key={item.action} 
+                to={item.href}
+                className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+              >
                 <span className="text-sm">{item.action}</span>
                 <Badge variant="secondary">{item.count}</Badge>
-              </div>
+              </Link>
             ))}
           </div>
         </motion.div>
@@ -186,17 +206,70 @@ function PlaceholderPage({ title }: { title: string }) {
   );
 }
 
+function AccessDenied() {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md w-full bg-card border border-border rounded-xl p-8 text-center"
+      >
+        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Shield className="w-8 h-8 text-red-500" />
+        </div>
+        <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+        <p className="text-muted-foreground mb-6">
+          You don't have permission to access the admin panel. 
+          Contact an administrator if you believe this is an error.
+        </p>
+        <Button onClick={() => navigate("/dashboard")}>
+          Return to Dashboard
+        </Button>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
+  const { isAdmin, isLoading } = useUserRoles();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        navigate('/auth');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+  }, [navigate]);
+
+  if (isAuthenticated === null || isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Check admin role
+  if (!isAdmin()) {
+    return <AccessDenied />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <AdminSidebar />
       <main className="ml-64">
         <Routes>
           <Route path="/" element={<AdminOverview />} />
-          <Route path="/users" element={<PlaceholderPage title="Users & Organizations" />} />
-          <Route path="/apis" element={<PlaceholderPage title="APIs & Marketplace" />} />
-          <Route path="/publishers" element={<PlaceholderPage title="Publishers" />} />
-          <Route path="/routing" element={<PlaceholderPage title="Routing Engine" />} />
+          <Route path="/users" element={<AdminUsersPage />} />
+          <Route path="/apis" element={<AdminApisPage />} />
+          <Route path="/publishers" element={<AdminPublishersPage />} />
+          <Route path="/routing" element={<AdminRoutingPage />} />
           <Route path="/billing" element={<PlaceholderPage title="Billing & Revenue" />} />
           <Route path="/usage" element={<PlaceholderPage title="Usage & Abuse" />} />
           <Route path="/logs" element={<PlaceholderPage title="Logs" />} />
