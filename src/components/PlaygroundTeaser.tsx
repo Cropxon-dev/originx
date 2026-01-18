@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
 import { Play, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
+import { ScrollReveal } from "./ScrollReveal";
+import { Link } from "react-router-dom";
 
 const sampleRequest = `{
   "model": "gpt-4o",
@@ -75,27 +76,15 @@ export const PlaygroundTeaser = () => {
     <section className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
+        <ScrollReveal className="text-center mb-16">
           <h2 className="text-display mb-4">Try Before You Ship</h2>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
             Real-time API playground with live cost estimation. No signup required to explore.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Playground Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto"
-        >
+        <ScrollReveal delay={0.2} className="max-w-5xl mx-auto">
           <div className="relative">
             {/* Glow Effect */}
             <div className="absolute -inset-4 bg-gradient-to-r from-accent/20 via-glow-secondary/20 to-accent/20 rounded-3xl blur-xl opacity-50" />
@@ -112,10 +101,13 @@ export const PlaygroundTeaser = () => {
                   </div>
                   <span className="text-sm text-muted-foreground font-mono">playground.originxcloud.com</span>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground text-sm font-medium hover:bg-accent/90 transition-colors">
+                <Link 
+                  to="/playground"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground text-sm font-medium hover:bg-accent/90 transition-colors"
+                >
                   <Play className="w-4 h-4" />
-                  Run Request
-                </button>
+                  Try Playground
+                </Link>
               </div>
 
               {/* Code Panels */}
@@ -168,7 +160,7 @@ export const PlaygroundTeaser = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </ScrollReveal>
       </div>
     </section>
   );

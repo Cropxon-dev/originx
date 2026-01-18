@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Key, CreditCard, Zap, Shield, Terminal, Layers } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
 
 const features = [
   {
@@ -39,28 +39,19 @@ export const WhyOriginX = () => {
     <section className="py-32 relative">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-20"
-        >
+        <ScrollReveal className="text-center mb-20">
           <h2 className="text-display mb-4">Why OriginX</h2>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
             Infrastructure-grade reliability with startup-level simplicity. Built for teams who move fast.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <motion.div
+            <ScrollReveal
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              delay={index * 0.1}
               className="group"
             >
               <div className="h-full p-6 rounded-2xl border border-border/50 bg-card/30 hover:bg-card/60 hover:border-accent/30 transition-all duration-300">
@@ -73,7 +64,7 @@ export const WhyOriginX = () => {
                 <h3 className="text-title text-lg mb-3">{feature.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Send, Shield, Route, CheckCircle } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
 
 const steps = [
   {
@@ -35,29 +35,20 @@ export const HowItWorks = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-20"
-        >
+        <ScrollReveal className="text-center mb-20">
           <h2 className="text-display mb-4">How OriginX Works</h2>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
             From request to response in milliseconds. One endpoint, infinite possibilities.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Steps */}
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, index) => (
-              <motion.div
+              <ScrollReveal
                 key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
+                delay={index * 0.15}
                 className="relative"
               >
                 {/* Connector Line */}
@@ -85,7 +76,7 @@ export const HowItWorks = () => {
                     <code className="text-accent">{step.code}</code>
                   </div>
                 </div>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>

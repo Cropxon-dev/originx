@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Book, Sparkles } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
+import { useNavigate } from "react-router-dom";
 
 export const CtaSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-32 relative overflow-hidden">
       {/* Background Effects */}
@@ -17,13 +21,7 @@ export const CtaSection = () => {
       />
 
       <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
-        >
+        <ScrollReveal className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-muted-foreground mb-8">
             <Sparkles className="w-4 h-4 text-accent" />
             Join 1,000+ developers building with OriginX
@@ -39,7 +37,7 @@ export const CtaSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="hero" size="xl">
+            <Button variant="hero" size="xl" onClick={() => navigate("/auth")}>
               Create Account
               <ArrowRight className="w-5 h-5" />
             </Button>
@@ -48,7 +46,7 @@ export const CtaSection = () => {
               Read Docs
             </Button>
           </div>
-        </motion.div>
+        </ScrollReveal>
       </div>
     </section>
   );

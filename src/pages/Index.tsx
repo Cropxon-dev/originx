@@ -7,12 +7,14 @@ import { PlaygroundTeaser } from "@/components/PlaygroundTeaser";
 import { SecuritySection } from "@/components/SecuritySection";
 import { CtaSection } from "@/components/CtaSection";
 import { Footer } from "@/components/Footer";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <AnimatedBackground />
       <Header />
-      <main>
+      <main className="relative z-10">
         <HeroSection />
         <HowItWorks />
         <WhyOriginX />
