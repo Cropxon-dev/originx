@@ -101,11 +101,11 @@ export function OriginXLogo({
           className="flex flex-col"
         >
           <span className="font-semibold text-lg tracking-tight leading-tight">
-            OriginX
+            OriginX API
           </span>
           {showSubtext && (
             <span className="text-[9px] text-muted-foreground leading-tight uppercase tracking-wider">
-              By Cropxon Innovations
+              By ORIGINX LABS PVT LTD
             </span>
           )}
         </motion.div>
