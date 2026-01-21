@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { LiveDemoMode } from "@/components/LiveDemoMode";
 import { 
   User, Smartphone, Globe, Key, Shield, UserCog,
   Fingerprint, AlertTriangle, Lock, RefreshCw, FileText,
@@ -10,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-
 // Flow steps configuration
 const flowSteps = [
   { id: 0, label: "User Initiates", description: "User requests access from trusted device" },
@@ -220,7 +220,7 @@ export default function OriginXOne() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              OriginX One
+              OneAuth
               <br />
               <span className="text-gradient">Identity Decision Core</span>
             </h1>
@@ -397,7 +397,7 @@ export default function OriginXOne() {
                   transition={{ duration: 2, repeat: currentStep >= 3 && currentStep <= 6 ? Infinity : 0 }}
                   className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full whitespace-nowrap"
                 >
-                  OriginX One — Identity Decision Core
+                  OneAuth — Identity Decision Core
                 </motion.div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
@@ -542,8 +542,32 @@ export default function OriginXOne() {
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* Live Demo Section */}
       <section className="py-20 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-sm text-green-500">Interactive Demo</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Try OneAuth Live</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Experience the authentication flow in real-time. Enter test credentials and watch as OneAuth
+              processes your request through each security layer.
+            </p>
+          </motion.div>
+
+          <LiveDemoMode />
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -589,7 +613,7 @@ export default function OriginXOne() {
               Ready to Secure Your Identity?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Get started with OriginX One and experience enterprise-grade identity management.
+              Get started with OneAuth and experience enterprise-grade identity management.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button variant="hero" size="lg" onClick={() => navigate("/auth")}>
