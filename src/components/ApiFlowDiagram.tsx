@@ -1,8 +1,9 @@
 import { motion, useReducedMotion, useInView, AnimatePresence } from "framer-motion";
-import { Zap, Shield, Route, CheckCircle2, Send, ArrowLeftRight, KeyRound, Fingerprint, UserCheck } from "lucide-react";
+import { Zap, Shield, Route, CheckCircle2, Send, ArrowLeftRight, KeyRound, Fingerprint, UserCheck, Sparkles, ShieldCheck, Brain } from "lucide-react";
 import { useEffect, useMemo, useState, memo, useCallback, useRef } from "react";
 import { OriginXLogoFilled } from "./OriginXLogo";
 import { useNavigate } from "react-router-dom";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 type FlowStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -357,104 +358,161 @@ const OneAuthCard = memo(({ step, onClick }: { step: FlowStep; onClick: () => vo
   const isAuthenticating = step >= 1 && step < 3;
   const isAuthenticated = step >= 3;
 
+  const features = [
+    { icon: Sparkles, label: "Passwordless", desc: "WebAuthn & Magic Links" },
+    { icon: ShieldCheck, label: "Adaptive MFA", desc: "Context-aware security" },
+    { icon: Brain, label: "Risk Engine", desc: "AI-powered threat detection" },
+  ];
+
   return (
     <div className="flex flex-col items-center flex-shrink-0">
-      <motion.div
-        className={`relative bg-card/90 border-2 rounded-xl p-2 sm:p-3 cursor-pointer transition-all ${
-          isAuthenticating
-            ? "border-cyan-400/70 shadow-xl shadow-cyan-400/25"
-            : isAuthenticated
-            ? "border-green-400/60 shadow-lg shadow-green-400/20"
-            : "border-border/50 shadow-md hover:border-cyan-400/40"
-        }`}
-        onClick={onClick}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        {/* Glow Effect */}
-        <motion.div
-          className="absolute -inset-2 rounded-xl blur-lg -z-10"
-          animate={{
-            background: isAuthenticating
-              ? "linear-gradient(135deg, hsl(187 85% 53% / 0.3), hsl(var(--accent) / 0.2))"
-              : isAuthenticated
-              ? "linear-gradient(135deg, hsl(142 76% 36% / 0.25), hsl(187 85% 53% / 0.15))"
-              : "transparent",
-          }}
-        />
-
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Auth Icon */}
+      <HoverCard openDelay={100} closeDelay={100}>
+        <HoverCardTrigger asChild>
           <motion.div
-            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors ${
-              isAuthenticated
-                ? "bg-gradient-to-br from-green-400/30 to-green-500/20 border border-green-400/50"
-                : isAuthenticating
-                ? "bg-gradient-to-br from-cyan-400/30 to-cyan-500/20 border border-cyan-400/50"
-                : "bg-gradient-to-br from-cyan-400/20 to-cyan-500/10 border border-cyan-400/30"
+            className={`relative bg-card/90 border-2 rounded-xl p-2 sm:p-3 cursor-pointer transition-all ${
+              isAuthenticating
+                ? "border-cyan-400/70 shadow-xl shadow-cyan-400/25"
+                : isAuthenticated
+                ? "border-green-400/60 shadow-lg shadow-green-400/20"
+                : "border-border/50 shadow-md hover:border-cyan-400/40"
             }`}
-            animate={
-              prefersReducedMotion
-                ? {}
-                : isAuthenticating
-                ? { rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }
-                : {}
-            }
-            transition={{ duration: 0.5, repeat: isAuthenticating ? Infinity : 0 }}
+            onClick={onClick}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {isAuthenticated ? (
-              <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-            ) : isAuthenticating ? (
-              <Fingerprint className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-            ) : (
-              <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400/70" />
-            )}
-          </motion.div>
-
-          <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-bold text-foreground">OneAuth</span>
-            <span className="text-[8px] sm:text-[9px] text-muted-foreground">
-              {isAuthenticated ? "✓ Verified" : isAuthenticating ? "Verifying..." : "Identity Layer"}
-            </span>
-          </div>
-
-          {isAuthenticated && (
+            {/* Glow Effect */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-            </motion.div>
-          )}
-        </div>
+              className="absolute -inset-2 rounded-xl blur-lg -z-10"
+              animate={{
+                background: isAuthenticating
+                  ? "linear-gradient(135deg, hsl(187 85% 53% / 0.3), hsl(var(--accent) / 0.2))"
+                  : isAuthenticated
+                  ? "linear-gradient(135deg, hsl(142 76% 36% / 0.25), hsl(187 85% 53% / 0.15))"
+                  : "transparent",
+              }}
+            />
 
-        {/* Auth Features - shown when authenticating */}
-        <AnimatePresence>
-          {isAuthenticating && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-2 pt-2 border-t border-border/50"
-            >
-              <div className="flex gap-2 justify-center">
-                {["MFA", "SSO", "Risk"].map((feature, idx) => (
-                  <motion.span
-                    key={feature}
-                    className="text-[7px] sm:text-[8px] px-1.5 py-0.5 rounded bg-cyan-400/20 text-cyan-400 font-medium"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    {feature}
-                  </motion.span>
-                ))}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Auth Icon */}
+              <motion.div
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors ${
+                  isAuthenticated
+                    ? "bg-gradient-to-br from-green-400/30 to-green-500/20 border border-green-400/50"
+                    : isAuthenticating
+                    ? "bg-gradient-to-br from-cyan-400/30 to-cyan-500/20 border border-cyan-400/50"
+                    : "bg-gradient-to-br from-cyan-400/20 to-cyan-500/10 border border-cyan-400/30"
+                }`}
+                animate={
+                  prefersReducedMotion
+                    ? {}
+                    : isAuthenticating
+                    ? { rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }
+                    : {}
+                }
+                transition={{ duration: 0.5, repeat: isAuthenticating ? Infinity : 0 }}
+              >
+                {isAuthenticated ? (
+                  <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+                ) : isAuthenticating ? (
+                  <Fingerprint className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+                ) : (
+                  <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400/70" />
+                )}
+              </motion.div>
+
+              <div className="flex flex-col">
+                <span className="text-xs sm:text-sm font-bold text-foreground">OneAuth</span>
+                <span className="text-[8px] sm:text-[9px] text-muted-foreground">
+                  {isAuthenticated ? "✓ Verified" : isAuthenticating ? "Verifying..." : "Identity Layer"}
+                </span>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+
+              {isAuthenticated && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+                </motion.div>
+              )}
+            </div>
+
+            {/* Auth Features - shown when authenticating */}
+            <AnimatePresence>
+              {isAuthenticating && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-2 pt-2 border-t border-border/50"
+                >
+                  <div className="flex gap-2 justify-center">
+                    {["MFA", "SSO", "Risk"].map((feature, idx) => (
+                      <motion.span
+                        key={feature}
+                        className="text-[7px] sm:text-[8px] px-1.5 py-0.5 rounded bg-cyan-400/20 text-cyan-400 font-medium"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        {feature}
+                      </motion.span>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </HoverCardTrigger>
+        
+        <HoverCardContent 
+          side="top" 
+          sideOffset={12} 
+          className="w-72 bg-card/95 backdrop-blur-xl border-cyan-400/30 shadow-xl shadow-cyan-400/10"
+        >
+          <div className="space-y-3">
+            {/* Header */}
+            <div className="flex items-center gap-2 pb-2 border-b border-border/50">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400/30 to-cyan-500/20 border border-cyan-400/50 flex items-center justify-center">
+                <KeyRound className="w-4 h-4 text-cyan-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-foreground">OneAuth</h4>
+                <p className="text-[10px] text-muted-foreground">Enterprise Identity Platform</p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-2">
+              {features.map((feature, idx) => (
+                <motion.div
+                  key={feature.label}
+                  className="flex items-start gap-2.5 p-2 rounded-lg bg-muted/50 hover:bg-muted/80 transition-colors"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <div className="w-6 h-6 rounded-md bg-cyan-400/20 flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-3.5 h-3.5 text-cyan-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">{feature.label}</p>
+                    <p className="text-[10px] text-muted-foreground">{feature.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="pt-2 border-t border-border/50">
+              <p className="text-[10px] text-center text-cyan-400 font-medium">
+                Click to explore OneAuth →
+              </p>
+            </div>
+          </div>
+        </HoverCardContent>
+      </HoverCard>
       
       <p className="text-[8px] sm:text-[9px] text-cyan-400/80 text-center mt-1.5 font-medium">
         Identity Gateway
