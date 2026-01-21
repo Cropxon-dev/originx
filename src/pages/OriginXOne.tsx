@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { LiveDemoMode } from "@/components/LiveDemoMode";
+import { SdkCodeSnippets } from "@/components/SdkCodeSnippets";
 import { 
   User, Smartphone, Globe, Key, Shield, UserCog,
   Fingerprint, AlertTriangle, Lock, RefreshCw, FileText,
@@ -566,8 +567,31 @@ export default function OriginXOne() {
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* SDK Integration Section */}
       <section className="py-20 px-6 bg-muted/30">
+        <div className="container mx-auto max-w-5xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 mb-4">
+              <span className="text-sm text-accent">Developer Friendly</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Integrate in Minutes</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              OneAuth SDK provides simple, type-safe APIs for all major platforms. 
+              Get started with just a few lines of code.
+            </p>
+          </motion.div>
+
+          <SdkCodeSnippets />
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-20 px-6">
         <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
