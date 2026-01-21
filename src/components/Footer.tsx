@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { OriginXLogo } from "./OriginXLogo";
-import { Twitter, Github, MessageCircle } from "lucide-react";
+import { Twitter, Github, MessageCircle, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 
 const footerLinks = {
   Product: [
     { label: "APIs", href: "/marketplace" },
+    { label: "OriginX One", href: "/originx-one" },
     { label: "Docs", href: "#docs" },
     { label: "Pricing", href: "#pricing" },
     { label: "Playground", href: "/playground" },
@@ -62,16 +63,16 @@ export const Footer = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
             {/* Logo & Description */}
-            <div className="col-span-2 md:col-span-1">
+            <div className="col-span-2">
               <Link to="/" className="inline-block mb-4">
                 <OriginXLogo size="md" showText showSubtext animate={false} />
               </Link>
               <p className="text-sm text-muted-foreground mb-4">
                 The universal API hub for modern developers.
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-6">
                 A Product of{" "}
                 <a 
                   href="https://www.originxlabs.com" 
@@ -82,6 +83,22 @@ export const Footer = () => {
                   ORIGINX LABS PVT LTD
                 </a>
               </p>
+              
+              {/* Contact Information */}
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <a href="mailto:hello@originxlabs.com" className="flex items-center gap-2 hover:text-foreground transition-colors">
+                  <Mail className="w-3.5 h-3.5" />
+                  hello@originxlabs.com
+                </a>
+                <a href="tel:+919876543210" className="flex items-center gap-2 hover:text-foreground transition-colors">
+                  <Phone className="w-3.5 h-3.5" />
+                  +91 98765 43210
+                </a>
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                  <span>Bangalore, Karnataka, India</span>
+                </div>
+              </div>
             </div>
 
             {/* Links */}
@@ -119,37 +136,41 @@ export const Footer = () => {
             <div className="text-center md:text-left mb-4 md:mb-0">
               <div className="flex items-center gap-2 justify-center md:justify-start mb-1">
                 <OriginXLogo size="sm" animate={false} />
-                <span className="text-sm text-muted-foreground">© 2025 All rights reserved.</span>
+                <span className="text-sm text-muted-foreground">© 2025 ORIGINX LABS PVT LTD. All rights reserved.</span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                A Product of{" "}
-                <a 
-                  href="https://www.originxlabs.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-accent hover:underline"
-                >
-                  ORIGINX LABS PVT LTD
-                </a>
-              </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <a 
-                href="#" 
+                href="https://twitter.com/originxapi" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a 
-                href="#" 
+                href="https://github.com/originxlabs" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
               <a 
-                href="#" 
+                href="https://linkedin.com/company/originxlabs" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://discord.gg/originx" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                 aria-label="Discord"
               >

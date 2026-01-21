@@ -9,6 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import Playground from "@/pages/Playground";
 import Marketplace from "@/pages/Marketplace";
 import About from "@/pages/About";
+import OriginXOne from "@/pages/OriginXOne";
 import NotFound from "@/pages/NotFound";
 
 // Dashboard pages
@@ -56,6 +57,14 @@ export const AnimatedRoutes = () => {
           element={
             <PageTransition>
               <About />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/originx-one"
+          element={
+            <PageTransition>
+              <OriginXOne />
             </PageTransition>
           }
         />

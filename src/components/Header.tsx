@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Store, Info, FileText, DollarSign, Users, Gamepad2 } from "lucide-react";
+import { Menu, X, Store, Info, FileText, DollarSign, Users, Gamepad2, Shield } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
@@ -8,6 +8,7 @@ import { OriginXLogo } from "./OriginXLogo";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace", isRoute: true, icon: Store },
+  { label: "OriginX One", href: "/originx-one", isRoute: true, icon: Shield },
   { label: "About", href: "/about", isRoute: true, icon: Info },
   { label: "Docs", href: "#docs", isRoute: false, icon: FileText },
   { label: "Pricing", href: "#pricing", isRoute: false, icon: DollarSign },
