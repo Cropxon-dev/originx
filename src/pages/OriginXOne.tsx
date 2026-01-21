@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { LiveDemoMode } from "@/components/LiveDemoMode";
 import { SdkCodeSnippets } from "@/components/SdkCodeSnippets";
+import { FaqSection } from "@/components/FaqSection";
 import { 
   User, Smartphone, Globe, Key, Shield, UserCog,
   Fingerprint, AlertTriangle, Lock, RefreshCw, FileText,
@@ -624,6 +625,9 @@ export default function OriginXOne() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FaqSection />
 
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-background to-muted/30">
