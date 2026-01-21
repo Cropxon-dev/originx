@@ -86,7 +86,7 @@ export function SplashScreen({ onComplete, minDuration = 2500 }: SplashScreenPro
 
             {/* Animated Typography */}
             <div className="flex flex-col items-center overflow-hidden">
-              {/* OriginX */}
+              {/* OriginX One */}
               <motion.h1
                 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground"
                 initial={{ opacity: 0, y: 30 }}
@@ -98,7 +98,7 @@ export function SplashScreen({ onComplete, minDuration = 2500 }: SplashScreenPro
                 }}
               >
                 <span className="inline-block">
-                  {"OriginX".split("").map((char, index) => (
+                  {"OriginX One".split("").map((char, index) => (
                     <motion.span
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
@@ -110,7 +110,7 @@ export function SplashScreen({ onComplete, minDuration = 2500 }: SplashScreenPro
                       }}
                       className="inline-block"
                     >
-                      {char}
+                      {char === " " ? "\u00A0" : char}
                     </motion.span>
                   ))}
                 </span>
@@ -133,7 +133,7 @@ export function SplashScreen({ onComplete, minDuration = 2500 }: SplashScreenPro
                 </motion.span>
               </motion.div>
 
-              {/* CROPXON INNOVATIONS PVT LTD */}
+              {/* ORIGINX LABS PRIVATE LIMITED */}
               <motion.p
                 className="text-lg md:text-xl font-medium tracking-wide text-muted-foreground mt-1"
                 initial={{ opacity: 0, y: 10 }}
@@ -141,7 +141,7 @@ export function SplashScreen({ onComplete, minDuration = 2500 }: SplashScreenPro
                 transition={{ duration: 0.5, delay: 1.5 }}
               >
                 <span className="inline-block overflow-hidden">
-                  {"CROPXON INNOVATIONS PVT LTD".split("").map((char, index) => (
+                  {"ORIGINX LABS PRIVATE LIMITED".split("").map((char, index) => (
                     <motion.span
                       key={index}
                       initial={{ opacity: 0, y: 15 }}
