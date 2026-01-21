@@ -72,14 +72,14 @@ export const Footer = () => {
                 The universal API hub for modern developers.
               </p>
               <p className="text-xs text-muted-foreground">
-                A Product Division of{" "}
+                A Product of{" "}
                 <a 
-                  href="https://www.cropxon.com" 
+                  href="https://www.originxlabs.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-accent hover:underline"
                 >
-                  Cropxon Innovations Pvt. Ltd
+                  ORIGINX LABS PVT LTD
                 </a>
               </p>
             </div>
@@ -122,14 +122,14 @@ export const Footer = () => {
                 <span className="text-sm text-muted-foreground">© 2025 All rights reserved.</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                A Product Division of{" "}
+                A Product of{" "}
                 <a 
-                  href="https://www.cropxon.com" 
+                  href="https://www.originxlabs.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-accent hover:underline"
                 >
-                  Cropxon Innovations Pvt. Ltd
+                  ORIGINX LABS PVT LTD
                 </a>
               </p>
             </div>
