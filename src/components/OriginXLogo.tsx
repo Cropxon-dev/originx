@@ -101,7 +101,7 @@ export function OriginXLogo({
           className="flex flex-col"
         >
           <span className="font-semibold text-lg tracking-tight leading-tight">
-            OriginX API
+            OriginX One
           </span>
           {showSubtext && (
             <span className="text-[9px] text-muted-foreground leading-tight uppercase tracking-wider">

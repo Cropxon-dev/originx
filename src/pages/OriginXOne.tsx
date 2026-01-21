@@ -1,63 +1,131 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { 
   User, Smartphone, Globe, Key, Shield, UserCog,
   Fingerprint, AlertTriangle, Lock, RefreshCw, FileText,
-  Database, Zap, BarChart3, Server, ArrowRight, CheckCircle
+  Database, Zap, BarChart3, Server, ArrowRight, CheckCircle,
+  Play, Pause, RotateCcw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
 
-// Flow node component
+// Flow steps configuration
+const flowSteps = [
+  { id: 0, label: "User Initiates", description: "User requests access from trusted device" },
+  { id: 1, label: "App Request", description: "Enterprise application receives the request" },
+  { id: 2, label: "Protocol Selection", description: "OIDC/SAML/SCIM protocol routes the request" },
+  { id: 3, label: "Authentication", description: "Auth Engine verifies identity with OTP/Passkeys" },
+  { id: 4, label: "Risk Assessment", description: "Risk Engine analyzes signals and calculates score" },
+  { id: 5, label: "Policy Check", description: "Policy Engine applies RBAC/ABAC rules" },
+  { id: 6, label: "Session Created", description: "Session Engine establishes continuous trust" },
+  { id: 7, label: "Access Granted", description: "User gains secure access to applications" },
+];
+
+// Animated connector with data flow pulse
+const AnimatedConnector = ({ 
+  isActive, 
+  direction = "down",
+  delay = 0 
+}: { 
+  isActive: boolean; 
+  direction?: "down" | "right";
+  delay?: number;
+}) => (
+  <div className={`relative flex items-center justify-center ${direction === "down" ? "h-10 w-full" : "w-12 h-full"}`}>
+    <div className={`${direction === "down" ? "w-0.5 h-full" : "h-0.5 w-full"} bg-border`} />
+    <AnimatePresence>
+      {isActive && (
+        <motion.div
+          initial={{ 
+            opacity: 0, 
+            [direction === "down" ? "y" : "x"]: direction === "down" ? "-100%" : "-100%" 
+          }}
+          animate={{ 
+            opacity: [0, 1, 1, 0], 
+            [direction === "down" ? "y" : "x"]: direction === "down" ? "100%" : "100%" 
+          }}
+          transition={{ 
+            duration: 0.8, 
+            delay,
+            ease: "easeInOut"
+          }}
+          className={`absolute ${direction === "down" ? "w-3 h-3" : "w-3 h-3"} rounded-full bg-accent shadow-[0_0_12px_4px_hsl(var(--accent)/0.6)]`}
+        />
+      )}
+    </AnimatePresence>
+  </div>
+);
+
+// Interactive flow node
 const FlowNode = ({ 
   icon: Icon, 
   title, 
   subtitle, 
-  color = "accent",
-  delay = 0,
-  size = "default"
+  isActive,
+  isCompleted,
+  stepNumber,
+  onClick,
 }: { 
   icon: any; 
   title: string; 
   subtitle?: string; 
-  color?: string;
-  delay?: number;
-  size?: "small" | "default" | "large";
-}) => {
-  const sizeClasses = {
-    small: "w-32 p-3",
-    default: "w-40 p-4",
-    large: "w-48 p-5"
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.4 }}
-      className={`${sizeClasses[size]} bg-card border border-border rounded-xl text-center`}
-    >
-      <div className={`w-10 h-10 mx-auto mb-2 rounded-lg bg-${color}/10 flex items-center justify-center`}>
-        <Icon className={`w-5 h-5 text-${color}`} />
-      </div>
-      <p className="text-xs font-medium leading-tight">{title}</p>
-      {subtitle && <p className="text-[10px] text-muted-foreground mt-1">{subtitle}</p>}
-    </motion.div>
-  );
-};
-
-// Connector line
-const Connector = ({ direction = "down", delay = 0 }: { direction?: "down" | "right" | "left"; delay?: number }) => (
+  isActive: boolean;
+  isCompleted: boolean;
+  stepNumber: number;
+  onClick?: () => void;
+}) => (
   <motion.div
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ once: true }}
-    transition={{ delay }}
-    className={`flex items-center justify-center ${direction === "down" ? "h-8" : "w-8"}`}
+    onClick={onClick}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className={`
+      relative p-4 rounded-xl border-2 text-center cursor-pointer transition-all duration-300
+      ${isActive 
+        ? "bg-accent/20 border-accent shadow-[0_0_20px_4px_hsl(var(--accent)/0.3)]" 
+        : isCompleted 
+          ? "bg-card border-accent/50" 
+          : "bg-card border-border hover:border-muted-foreground/50"
+      }
+    `}
   >
-    <div className={`${direction === "down" ? "w-0.5 h-full" : "h-0.5 w-full"} bg-gradient-to-${direction === "down" ? "b" : "r"} from-accent/50 to-accent/20`} />
+    {/* Step indicator */}
+    <div className={`
+      absolute -top-2 -left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+      ${isActive 
+        ? "bg-accent text-accent-foreground" 
+        : isCompleted 
+          ? "bg-accent/80 text-accent-foreground" 
+          : "bg-muted text-muted-foreground"
+      }
+    `}>
+      {isCompleted && !isActive ? <CheckCircle className="w-3.5 h-3.5" /> : stepNumber}
+    </div>
+    
+    <div className={`
+      w-10 h-10 mx-auto mb-2 rounded-lg flex items-center justify-center transition-colors duration-300
+      ${isActive ? "bg-accent/30" : "bg-muted"}
+    `}>
+      <Icon className={`w-5 h-5 transition-colors duration-300 ${isActive ? "text-accent" : "text-muted-foreground"}`} />
+    </div>
+    <p className={`text-xs font-medium leading-tight transition-colors duration-300 ${isActive ? "text-foreground" : ""}`}>
+      {title}
+    </p>
+    {subtitle && (
+      <p className={`text-[10px] mt-1 transition-colors duration-300 ${isActive ? "text-accent" : "text-muted-foreground"}`}>
+        {subtitle}
+      </p>
+    )}
+    
+    {/* Active pulse ring */}
+    {isActive && (
+      <motion.div
+        animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        className="absolute inset-0 rounded-xl border-2 border-accent"
+      />
+    )}
   </motion.div>
 );
 
@@ -96,6 +164,43 @@ const features = [
 
 export default function OriginXOne() {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [showDataPulse, setShowDataPulse] = useState(false);
+
+  // Auto-advance steps
+  useEffect(() => {
+    if (!isPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => {
+        const next = prev + 1;
+        if (next >= flowSteps.length) {
+          return 0;
+        }
+        return next;
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  // Show data pulse when step changes
+  useEffect(() => {
+    setShowDataPulse(true);
+    const timeout = setTimeout(() => setShowDataPulse(false), 800);
+    return () => clearTimeout(timeout);
+  }, [currentStep]);
+
+  const handleStepClick = useCallback((step: number) => {
+    setCurrentStep(step);
+    setIsPlaying(false);
+  }, []);
+
+  const resetFlow = useCallback(() => {
+    setCurrentStep(0);
+    setIsPlaying(true);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -139,177 +244,300 @@ export default function OriginXOne() {
         </div>
       </section>
 
-      {/* Architecture Flow Section */}
-      <section className="py-20 px-6 bg-muted/30 overflow-x-auto">
+      {/* Interactive Architecture Flow Section */}
+      <section className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-8"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Architecture Flow</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From user authentication to continuous trust validation, OriginX One handles the entire identity lifecycle.
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Interactive Architecture Flow</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+              Watch the identity flow in action. Click any step to explore, or let it animate automatically.
             </p>
+            
+            {/* Controls */}
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <Button
+                variant={isPlaying ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="gap-2"
+              >
+                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {isPlaying ? "Pause" : "Play"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFlow}
+                className="gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset
+              </Button>
+            </div>
+
+            {/* Current Step Info */}
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-accent/10 border border-accent/20"
+            >
+              <span className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-sm">
+                {currentStep + 1}
+              </span>
+              <div className="text-left">
+                <p className="font-medium text-sm">{flowSteps[currentStep].label}</p>
+                <p className="text-xs text-muted-foreground">{flowSteps[currentStep].description}</p>
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* Flow Diagram */}
-          <div className="min-w-[900px] mx-auto">
-            {/* Row 1: User & Device */}
-            <div className="flex items-center justify-center gap-8 mb-6">
+          <div className="overflow-x-auto pb-4">
+            <div className="min-w-[1000px] mx-auto space-y-2">
+              
+              {/* Row 1: User & Device */}
+              <div className="flex items-center justify-center gap-6">
+                <FlowNode
+                  icon={User}
+                  title="User"
+                  subtitle="Workforce"
+                  isActive={currentStep === 0}
+                  isCompleted={currentStep > 0}
+                  stepNumber={1}
+                  onClick={() => handleStepClick(0)}
+                />
+                <AnimatedConnector isActive={showDataPulse && currentStep === 0} direction="right" />
+                <FlowNode
+                  icon={Smartphone}
+                  title="Trusted Device"
+                  subtitle="iOS · Android · Browser"
+                  isActive={currentStep === 0}
+                  isCompleted={currentStep > 0}
+                  stepNumber={1}
+                  onClick={() => handleStepClick(0)}
+                />
+              </div>
+
+              <AnimatedConnector isActive={showDataPulse && currentStep === 0} delay={0.2} />
+
+              {/* Row 2: Applications */}
+              <div className="flex items-center justify-center gap-8">
+                <FlowNode
+                  icon={Globe}
+                  title="Enterprise Apps"
+                  subtitle="Web · Mobile · APIs"
+                  isActive={currentStep === 1}
+                  isCompleted={currentStep > 1}
+                  stepNumber={2}
+                  onClick={() => handleStepClick(1)}
+                />
+                <FlowNode
+                  icon={Server}
+                  title="Legacy Apps"
+                  subtitle="SAML Support"
+                  isActive={currentStep === 1}
+                  isCompleted={currentStep > 1}
+                  stepNumber={2}
+                  onClick={() => handleStepClick(1)}
+                />
+              </div>
+
+              <AnimatedConnector isActive={showDataPulse && currentStep === 1} delay={0.2} />
+
+              {/* Row 3: Protocol Layer */}
+              <div className="flex items-center justify-center gap-4">
+                <FlowNode
+                  icon={Key}
+                  title="OIDC"
+                  isActive={currentStep === 2}
+                  isCompleted={currentStep > 2}
+                  stepNumber={3}
+                  onClick={() => handleStepClick(2)}
+                />
+                <FlowNode
+                  icon={Shield}
+                  title="SAML 2.0"
+                  isActive={currentStep === 2}
+                  isCompleted={currentStep > 2}
+                  stepNumber={3}
+                  onClick={() => handleStepClick(2)}
+                />
+                <FlowNode
+                  icon={UserCog}
+                  title="SCIM 2.0"
+                  isActive={currentStep === 2}
+                  isCompleted={currentStep > 2}
+                  stepNumber={3}
+                  onClick={() => handleStepClick(2)}
+                />
+              </div>
+
+              <AnimatedConnector isActive={showDataPulse && currentStep === 2} delay={0.2} />
+
+              {/* Row 4: OriginX One Core */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-4"
+                animate={{
+                  boxShadow: currentStep >= 3 && currentStep <= 6
+                    ? "0 0 40px 8px hsl(var(--accent) / 0.2)"
+                    : "0 0 0px 0px transparent"
+                }}
+                className="relative p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/30"
               >
-                <div className="w-20 h-20 rounded-2xl bg-card border border-border flex flex-col items-center justify-center">
-                  <User className="w-8 h-8 text-accent mb-1" />
-                  <span className="text-[10px] text-muted-foreground">User</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-muted-foreground" />
-                <div className="w-24 h-20 rounded-2xl bg-card border border-border flex flex-col items-center justify-center">
-                  <Smartphone className="w-8 h-8 text-accent mb-1" />
-                  <span className="text-[10px] text-muted-foreground text-center">Trusted Device</span>
+                <motion.div 
+                  animate={{ 
+                    scale: currentStep >= 3 && currentStep <= 6 ? [1, 1.02, 1] : 1,
+                    opacity: 1 
+                  }}
+                  transition={{ duration: 2, repeat: currentStep >= 3 && currentStep <= 6 ? Infinity : 0 }}
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full whitespace-nowrap"
+                >
+                  OriginX One — Identity Decision Core
+                </motion.div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
+                  <FlowNode
+                    icon={Database}
+                    title="Identity Core"
+                    subtitle="Users · Tenants"
+                    isActive={currentStep === 3}
+                    isCompleted={currentStep > 3}
+                    stepNumber={4}
+                    onClick={() => handleStepClick(3)}
+                  />
+                  <FlowNode
+                    icon={Fingerprint}
+                    title="Auth Engine"
+                    subtitle="OTP · Push · Passkeys"
+                    isActive={currentStep === 3}
+                    isCompleted={currentStep > 3}
+                    stepNumber={4}
+                    onClick={() => handleStepClick(3)}
+                  />
+                  <FlowNode
+                    icon={AlertTriangle}
+                    title="Risk Engine"
+                    subtitle="Signals · Scoring"
+                    isActive={currentStep === 4}
+                    isCompleted={currentStep > 4}
+                    stepNumber={5}
+                    onClick={() => handleStepClick(4)}
+                  />
+                  <FlowNode
+                    icon={Lock}
+                    title="Policy Engine"
+                    subtitle="RBAC · ABAC"
+                    isActive={currentStep === 5}
+                    isCompleted={currentStep > 5}
+                    stepNumber={6}
+                    onClick={() => handleStepClick(5)}
+                  />
+                  <FlowNode
+                    icon={RefreshCw}
+                    title="Session Engine"
+                    subtitle="Continuous Trust"
+                    isActive={currentStep === 6}
+                    isCompleted={currentStep > 6}
+                    stepNumber={7}
+                    onClick={() => handleStepClick(6)}
+                  />
+                  <FlowNode
+                    icon={FileText}
+                    title="Audit Engine"
+                    subtitle="Compliance"
+                    isActive={currentStep >= 3 && currentStep <= 6}
+                    isCompleted={currentStep > 6}
+                    stepNumber={7}
+                    onClick={() => handleStepClick(6)}
+                  />
                 </div>
               </motion.div>
+
+              <AnimatedConnector isActive={showDataPulse && currentStep === 6} delay={0.2} />
+
+              {/* Row 5: Data Stores */}
+              <div className="flex items-center justify-center gap-4 flex-wrap">
+                {[
+                  { icon: Database, title: "PostgreSQL", subtitle: "Identity Store" },
+                  { icon: Zap, title: "Redis", subtitle: "Sessions" },
+                  { icon: BarChart3, title: "ClickHouse", subtitle: "Analytics" },
+                  { icon: Shield, title: "Cloud KMS", subtitle: "Encryption" },
+                  { icon: FileText, title: "SIEM", subtitle: "SOC Tools" },
+                ].map((store, i) => (
+                  <motion.div
+                    key={store.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className={`
+                      px-5 py-3 rounded-xl border text-center transition-all duration-300
+                      ${currentStep === 7 
+                        ? "bg-card border-accent/50 shadow-[0_0_12px_2px_hsl(var(--accent)/0.2)]" 
+                        : "bg-muted border-border"
+                      }
+                    `}
+                  >
+                    <store.icon className={`w-6 h-6 mx-auto mb-1 transition-colors duration-300 ${currentStep === 7 ? "text-accent" : "text-muted-foreground"}`} />
+                    <p className="text-xs font-medium">{store.title}</p>
+                    <p className="text-[9px] text-muted-foreground">{store.subtitle}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Access Granted */}
+              <AnimatePresence>
+                {currentStep === 7 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="flex justify-center mt-6"
+                  >
+                    <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-green-500/20 border-2 border-green-500/50 shadow-[0_0_20px_4px_rgba(34,197,94,0.3)]">
+                      <CheckCircle className="w-8 h-8 text-green-500" />
+                      <div className="text-left">
+                        <p className="font-bold text-green-500">Access Granted</p>
+                        <p className="text-xs text-green-400">User authenticated and session established</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+          </div>
 
-            {/* Connector */}
-            <Connector delay={0.1} />
-
-            {/* Row 2: Applications */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center justify-center gap-6 mb-6"
-            >
-              <div className="px-6 py-4 rounded-xl bg-card border border-border text-center">
-                <Globe className="w-8 h-8 text-accent mx-auto mb-2" />
-                <p className="text-sm font-medium">Enterprise Applications</p>
-                <p className="text-[10px] text-muted-foreground">Web · Mobile · APIs</p>
-              </div>
-              <div className="px-6 py-4 rounded-xl bg-card border border-border text-center">
-                <Server className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm font-medium">Legacy Apps</p>
-                <p className="text-[10px] text-muted-foreground">SAML Support</p>
-              </div>
-            </motion.div>
-
-            {/* Connector */}
-            <Connector delay={0.3} />
-
-            {/* Row 3: Protocol Layer */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="flex items-center justify-center gap-4 mb-6"
-            >
-              <div className="px-4 py-3 rounded-lg bg-accent/10 border border-accent/20 text-center">
-                <Key className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="text-xs font-medium">OIDC</p>
-              </div>
-              <div className="px-4 py-3 rounded-lg bg-accent/10 border border-accent/20 text-center">
-                <Shield className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="text-xs font-medium">SAML 2.0</p>
-              </div>
-              <div className="px-4 py-3 rounded-lg bg-accent/10 border border-accent/20 text-center">
-                <UserCog className="w-5 h-5 text-accent mx-auto mb-1" />
-                <p className="text-xs font-medium">SCIM 2.0</p>
-              </div>
-            </motion.div>
-
-            {/* Connector */}
-            <Connector delay={0.5} />
-
-            {/* Row 4: OriginX One Core */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/30 mb-6"
-            >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full">
-                OriginX One — Identity Decision Core
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <Database className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Identity Core</p>
-                  <p className="text-[9px] text-muted-foreground">Users · Tenants</p>
-                </div>
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <Fingerprint className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Auth Engine</p>
-                  <p className="text-[9px] text-muted-foreground">OTP · Push · Passkeys</p>
-                </div>
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <AlertTriangle className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Risk Engine</p>
-                  <p className="text-[9px] text-muted-foreground">Signals · Scoring</p>
-                </div>
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <Lock className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Policy Engine</p>
-                  <p className="text-[9px] text-muted-foreground">RBAC · ABAC</p>
-                </div>
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <RefreshCw className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Session Engine</p>
-                  <p className="text-[9px] text-muted-foreground">Continuous Trust</p>
-                </div>
-                <div className="p-4 rounded-xl bg-card border border-border text-center">
-                  <FileText className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs font-medium">Audit Engine</p>
-                  <p className="text-[9px] text-muted-foreground">Compliance</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Connector */}
-            <Connector delay={0.7} />
-
-            {/* Row 5: Data Stores */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8 }}
-              className="flex items-center justify-center gap-6"
-            >
-              <div className="px-5 py-3 rounded-xl bg-muted border border-border text-center">
-                <Database className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-                <p className="text-xs font-medium">PostgreSQL</p>
-                <p className="text-[9px] text-muted-foreground">Identity Store</p>
-              </div>
-              <div className="px-5 py-3 rounded-xl bg-muted border border-border text-center">
-                <Zap className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-                <p className="text-xs font-medium">Redis</p>
-                <p className="text-[9px] text-muted-foreground">Sessions</p>
-              </div>
-              <div className="px-5 py-3 rounded-xl bg-muted border border-border text-center">
-                <BarChart3 className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-                <p className="text-xs font-medium">ClickHouse</p>
-                <p className="text-[9px] text-muted-foreground">Analytics</p>
-              </div>
-              <div className="px-5 py-3 rounded-xl bg-muted border border-border text-center">
-                <Shield className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-                <p className="text-xs font-medium">Cloud KMS</p>
-                <p className="text-[9px] text-muted-foreground">Encryption</p>
-              </div>
-              <div className="px-5 py-3 rounded-xl bg-muted border border-border text-center">
-                <FileText className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-                <p className="text-xs font-medium">SIEM</p>
-                <p className="text-[9px] text-muted-foreground">SOC Tools</p>
-              </div>
-            </motion.div>
+          {/* Step Progress Bar */}
+          <div className="mt-8 max-w-4xl mx-auto">
+            <div className="flex items-center gap-1">
+              {flowSteps.map((step, i) => (
+                <button
+                  key={step.id}
+                  onClick={() => handleStepClick(i)}
+                  className={`
+                    flex-1 h-2 rounded-full transition-all duration-300 cursor-pointer
+                    ${i < currentStep 
+                      ? "bg-accent" 
+                      : i === currentStep 
+                        ? "bg-accent animate-pulse" 
+                        : "bg-border hover:bg-muted-foreground/30"
+                    }
+                  `}
+                  title={step.label}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between mt-2 text-[10px] text-muted-foreground">
+              <span>Start</span>
+              <span>Authentication</span>
+              <span>Authorization</span>
+              <span>Complete</span>
+            </div>
           </div>
         </div>
       </section>
@@ -335,7 +563,8 @@ export default function OriginXOne() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 bg-card border border-border rounded-xl"
+                whileHover={{ scale: 1.02, y: -4 }}
+                className="p-6 bg-card border border-border rounded-xl hover:border-accent/50 hover:shadow-lg transition-all duration-300"
               >
                 <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-accent" />
