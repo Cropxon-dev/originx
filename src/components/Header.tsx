@@ -8,7 +8,7 @@ import { OriginXLogo } from "./OriginXLogo";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace", isRoute: true, icon: Store },
-  { label: "OriginX One", href: "/originx-one", isRoute: true, icon: Shield },
+  { label: "OneAuth", href: "/originx-one", isRoute: true, icon: Shield },
   { label: "About", href: "/about", isRoute: true, icon: Info },
   { label: "Docs", href: "#docs", isRoute: false, icon: FileText },
   { label: "Pricing", href: "#pricing", isRoute: false, icon: DollarSign },
