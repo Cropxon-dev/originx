@@ -1,7 +1,8 @@
 import { motion, useReducedMotion, useInView, AnimatePresence } from "framer-motion";
-import { Zap, Shield, Route, CheckCircle2, Send, ArrowLeftRight } from "lucide-react";
+import { Zap, Shield, Route, CheckCircle2, Send, ArrowLeftRight, KeyRound, Fingerprint, UserCheck } from "lucide-react";
 import { useEffect, useMemo, useState, memo, useCallback, useRef } from "react";
 import { OriginXLogoFilled } from "./OriginXLogo";
+import { useNavigate } from "react-router-dom";
 
 type FlowStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -350,6 +351,120 @@ const OriginXCore = memo(({ step }: { step: FlowStep }) => {
 
 OriginXCore.displayName = "OriginXCore";
 
+// OneAuth Integration Card
+const OneAuthCard = memo(({ step, onClick }: { step: FlowStep; onClick: () => void }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const isAuthenticating = step >= 1 && step < 3;
+  const isAuthenticated = step >= 3;
+
+  return (
+    <div className="flex flex-col items-center flex-shrink-0">
+      <motion.div
+        className={`relative bg-card/90 border-2 rounded-xl p-2 sm:p-3 cursor-pointer transition-all ${
+          isAuthenticating
+            ? "border-cyan-400/70 shadow-xl shadow-cyan-400/25"
+            : isAuthenticated
+            ? "border-green-400/60 shadow-lg shadow-green-400/20"
+            : "border-border/50 shadow-md hover:border-cyan-400/40"
+        }`}
+        onClick={onClick}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {/* Glow Effect */}
+        <motion.div
+          className="absolute -inset-2 rounded-xl blur-lg -z-10"
+          animate={{
+            background: isAuthenticating
+              ? "linear-gradient(135deg, hsl(187 85% 53% / 0.3), hsl(var(--accent) / 0.2))"
+              : isAuthenticated
+              ? "linear-gradient(135deg, hsl(142 76% 36% / 0.25), hsl(187 85% 53% / 0.15))"
+              : "transparent",
+          }}
+        />
+
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Auth Icon */}
+          <motion.div
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors ${
+              isAuthenticated
+                ? "bg-gradient-to-br from-green-400/30 to-green-500/20 border border-green-400/50"
+                : isAuthenticating
+                ? "bg-gradient-to-br from-cyan-400/30 to-cyan-500/20 border border-cyan-400/50"
+                : "bg-gradient-to-br from-cyan-400/20 to-cyan-500/10 border border-cyan-400/30"
+            }`}
+            animate={
+              prefersReducedMotion
+                ? {}
+                : isAuthenticating
+                ? { rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }
+                : {}
+            }
+            transition={{ duration: 0.5, repeat: isAuthenticating ? Infinity : 0 }}
+          >
+            {isAuthenticated ? (
+              <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+            ) : isAuthenticating ? (
+              <Fingerprint className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+            ) : (
+              <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400/70" />
+            )}
+          </motion.div>
+
+          <div className="flex flex-col">
+            <span className="text-xs sm:text-sm font-bold text-foreground">OneAuth</span>
+            <span className="text-[8px] sm:text-[9px] text-muted-foreground">
+              {isAuthenticated ? "✓ Verified" : isAuthenticating ? "Verifying..." : "Identity Layer"}
+            </span>
+          </div>
+
+          {isAuthenticated && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+            </motion.div>
+          )}
+        </div>
+
+        {/* Auth Features - shown when authenticating */}
+        <AnimatePresence>
+          {isAuthenticating && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-2 pt-2 border-t border-border/50"
+            >
+              <div className="flex gap-2 justify-center">
+                {["MFA", "SSO", "Risk"].map((feature, idx) => (
+                  <motion.span
+                    key={feature}
+                    className="text-[7px] sm:text-[8px] px-1.5 py-0.5 rounded bg-cyan-400/20 text-cyan-400 font-medium"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    {feature}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+      
+      <p className="text-[8px] sm:text-[9px] text-cyan-400/80 text-center mt-1.5 font-medium">
+        Identity Gateway
+      </p>
+    </div>
+  );
+});
+
+OneAuthCard.displayName = "OneAuthCard";
+
 // Large Your App Card
 const YourAppCard = memo(({ step }: { step: FlowStep }) => {
   const prefersReducedMotion = useReducedMotion();
@@ -444,12 +559,17 @@ export const ApiFlowDiagram = memo(() => {
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
+  const navigate = useNavigate();
   
   const [step, setStep] = useState<FlowStep>(0);
   const [selectedProvider, setSelectedProvider] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const providers = useMemo(() => ["OpenAI", "Anthropic", "Google", "AWS", "Stripe", "Twilio"], []);
+
+  const handleOneAuthClick = useCallback(() => {
+    navigate("/oneauth");
+  }, [navigate]);
 
   useEffect(() => {
     if (prefersReducedMotion || !isAutoPlaying || !isInView) return;
@@ -495,8 +615,8 @@ export const ApiFlowDiagram = memo(() => {
           How It Works
         </motion.p>
 
-        {/* Main Flow - 3 Column Layout */}
-        <div className="grid grid-cols-[1fr_auto_auto_auto_1fr] items-stretch gap-2 sm:gap-3 md:gap-4">
+        {/* Main Flow - 5 Column Layout with OneAuth */}
+        <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto_1fr] items-stretch gap-1 sm:gap-2 md:gap-3">
           {/* Your App Card */}
           <motion.div 
             className="min-h-[180px] sm:min-h-[200px] md:min-h-[220px]"
@@ -507,16 +627,41 @@ export const ApiFlowDiagram = memo(() => {
             <YourAppCard step={step} />
           </motion.div>
 
-          {/* Bidirectional Arrow 1 */}
+          {/* Arrow to OneAuth */}
           <motion.div
             className="self-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.35 }}
           >
             <BidirectionalArrow 
-              requestActive={step >= 1 && step <= 3} 
+              requestActive={step >= 1 && step <= 2} 
               responseActive={step >= 4}
+              compact
+            />
+          </motion.div>
+
+          {/* OneAuth Card */}
+          <motion.div
+            className="self-center"
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+          >
+            <OneAuthCard step={step} onClick={handleOneAuthClick} />
+          </motion.div>
+
+          {/* Arrow to OriginX Core */}
+          <motion.div
+            className="self-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.45 }}
+          >
+            <BidirectionalArrow 
+              requestActive={step >= 2 && step <= 3} 
+              responseActive={step >= 4}
+              compact
             />
           </motion.div>
 
@@ -540,6 +685,7 @@ export const ApiFlowDiagram = memo(() => {
             <BidirectionalArrow 
               requestActive={step >= 3 && step <= 4} 
               responseActive={step >= 4}
+              compact
             />
           </motion.div>
 
