@@ -164,7 +164,7 @@ const features = [
   }
 ];
 
-export default function OriginXOne() {
+export default function OneAuth() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);

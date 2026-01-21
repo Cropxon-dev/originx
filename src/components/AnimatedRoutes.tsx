@@ -9,7 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import Playground from "@/pages/Playground";
 import Marketplace from "@/pages/Marketplace";
 import About from "@/pages/About";
-import OriginXOne from "@/pages/OriginXOne";
+import OneAuth from "@/pages/OneAuth";
 import NotFound from "@/pages/NotFound";
 
 // Dashboard pages
@@ -61,10 +61,10 @@ export const AnimatedRoutes = () => {
           }
         />
         <Route
-          path="/originx-one"
+          path="/oneauth"
           element={
             <PageTransition>
-              <OriginXOne />
+              <OneAuth />
             </PageTransition>
           }
         />

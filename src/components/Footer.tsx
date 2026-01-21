@@ -6,7 +6,7 @@ import { Twitter, Github, MessageCircle, Linkedin, Mail, MapPin, Phone } from "l
 const footerLinks = {
   Product: [
     { label: "APIs", href: "/marketplace" },
-    { label: "OriginX One", href: "/originx-one" },
+    { label: "OneAuth", href: "/oneauth" },
     { label: "Docs", href: "#docs" },
     { label: "Pricing", href: "#pricing" },
     { label: "Playground", href: "/playground" },
