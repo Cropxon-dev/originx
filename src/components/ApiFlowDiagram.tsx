@@ -305,7 +305,7 @@ const OriginXCore = memo(({ step }: { step: FlowStep }) => {
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5">
                 <OriginXLogoFilled size="sm" className="text-foreground" />
-                <h3 className="font-bold text-sm sm:text-base md:text-lg">OriginX API</h3>
+                <h3 className="font-bold text-sm sm:text-base md:text-lg">OriginX One</h3>
               </div>
               <p className="text-[9px] sm:text-[10px] text-muted-foreground">Unified API Layer</p>
             </div>

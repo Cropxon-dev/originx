@@ -58,7 +58,7 @@ export default function About() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 mb-6">
               <Building2 className="w-4 h-4 text-accent" />
-              <span className="text-sm text-accent">About OriginX API</span>
+              <span className="text-sm text-accent">About OriginX One</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -68,7 +68,7 @@ export default function About() {
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              OriginX API is the unified API hub that connects developers to 700+ APIs 
+              OriginX One is the unified API hub that connects developers to 700+ APIs 
               through a single endpoint, one API key, and transparent billing.
             </p>
 
@@ -152,7 +152,7 @@ export default function About() {
               <h3 className="text-xl font-semibold mb-3">For Publishers</h3>
               <p className="text-muted-foreground">
                 Reach thousands of developers instantly. Publish your API, set your pricing, 
-                and let OriginX API handle distribution, billing, and payouts while you focus 
+                and let OriginX One handle distribution, billing, and payouts while you focus 
                 on building great products.
               </p>
             </motion.div>
@@ -241,7 +241,7 @@ export default function About() {
               Ready to Build?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Join thousands of developers using OriginX API to power their applications.
+              Join thousands of developers using OriginX One to power their applications.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a href="/auth" className="px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:opacity-90 transition-opacity">
